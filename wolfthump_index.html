@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wolfthump — For the Love of the Groove</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --deep-water: #0d1f2d;
+      --dark-teal: #112a35;
+      --mid-teal: #1a4a5c;
+      --water-blue: #2e7d9c;
+      --pale-water: #7ab8c8;
+      --cream: #e8dcc8;
+      --warm-white: #f5efe3;
+      --gold: #c9a84c;
+      --text-main: #e8dcc8;
+      --text-muted: #9ab5be;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--deep-water);
+      color: var(--text-main);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.35;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 60px 20px 80px;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 35%, rgba(46,125,156,0.16) 0%, transparent 70%),
+        linear-gradient(180deg, #091820 0%, #0d1f2d 60%, #0a1c2a 100%);
+    }
+
+    .hero-rings {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -52%);
+      width: 520px; height: 520px;
+      pointer-events: none;
+    }
+    .hero-rings span {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(122,184,200,0.07);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: ripple 7s ease-out infinite;
+    }
+    .hero-rings span:nth-child(1) { width: 180px; height: 180px; animation-delay: 0s; }
+    .hero-rings span:nth-child(2) { width: 300px; height: 300px; animation-delay: 1.2s; border-color: rgba(122,184,200,0.05); }
+    .hero-rings span:nth-child(3) { width: 420px; height: 420px; animation-delay: 2.4s; border-color: rgba(122,184,200,0.03); }
+    .hero-rings span:nth-child(4) { width: 520px; height: 520px; animation-delay: 3.6s; border-color: rgba(122,184,200,0.015); }
+    @keyframes ripple {
+      0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.85); }
+      20%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%,-50%) scale(1.1); }
+    }
+
+    .logo-wrap {
+      position: relative;
+      z-index: 2;
+      width: min(400px, 82vw);
+      margin-bottom: 28px;
+      animation: fadeUp 1.2s ease both;
+    }
+    .logo-wrap img {
+      width: 100%;
+      filter: invert(1) drop-shadow(0 0 28px rgba(122,184,200,0.35)) drop-shadow(0 0 60px rgba(46,125,156,0.18));
+      mix-blend-mode: screen;
+    }
+
+    .hero-tagline {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.6rem, 1.4vw, 0.8rem);
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: var(--pale-water);
+      opacity: 0.7;
+      z-index: 2;
+      animation: fadeUp 1.4s ease both 0.2s;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 28px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      opacity: 0;
+      animation: fadeIn 1.5s ease forwards 2s;
+    }
+    .scroll-hint span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.35em;
+      color: var(--pale-water);
+      text-transform: uppercase;
+      opacity: 0.5;
+    }
+    .scroll-arrow {
+      width: 1px; height: 36px;
+      background: linear-gradient(to bottom, var(--pale-water), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: 0.3; }
+      50%      { opacity: 0.7; }
+    }
+
+    /* ── SECTIONS ── */
+    section { position: relative; padding: 90px 20px; }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: var(--water-blue);
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--water-blue), transparent);
+      max-width: 100px;
+    }
+
+    /* ── VIDEO ── */
+    .video-section {
+      background: linear-gradient(180deg, #091820 0%, #0d1f2d 100%);
+      padding-top: 0; padding-bottom: 0;
+    }
+    .video-wrap {
+      width: 100%; max-width: 860px; margin: 0 auto;
+      aspect-ratio: 16/9;
+      background: #060f16;
+      border: 1px solid rgba(46,125,156,0.18);
+      overflow: hidden; position: relative;
+    }
+    .video-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+      background: linear-gradient(135deg, #091820 0%, #112535 100%);
+    }
+    .play-ring {
+      width: 68px; height: 68px;
+      border: 1.5px solid rgba(122,184,200,0.35);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .play-ring::after {
+      content: '';
+      border-style: solid;
+      border-width: 11px 0 11px 19px;
+      border-color: transparent transparent transparent rgba(122,184,200,0.55);
+      margin-left: 5px;
+    }
+    .video-placeholder p {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.32em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+    .video-wrap iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; border: none;
+    }
+
+    /* ── ABOUT ── */
+    .about-section {
+      background: linear-gradient(180deg, #0d1f2d 0%, #0f2530 50%, #0d1f2d 100%);
+    }
+    .about-section h2 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.7rem, 3.8vw, 2.5rem);
+      font-weight: 400;
+      color: var(--warm-white);
+      margin-bottom: 32px;
+      line-height: 1.3;
+    }
+    .about-section h2 em {
+      font-style: italic;
+      color: var(--pale-water);
+    }
+    .about-section p {
+      color: var(--text-main);
+      font-size: 1.12rem;
+      font-weight: 300;
+      max-width: 680px;
+      opacity: 0.88;
+    }
+    .about-section p + p { margin-top: 18px; }
+
+    .pull-quote {
+      margin-top: 52px;
+      padding: 30px 36px;
+      border-left: 2px solid var(--water-blue);
+      background: rgba(46,125,156,0.06);
+    }
+    .pull-quote blockquote {
+      font-size: clamp(1.05rem, 2.3vw, 1.28rem);
+      font-style: italic;
+      color: var(--pale-water);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+    .pull-quote cite {
+      display: block;
+      margin-top: 14px;
+      font-style: normal;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* ── PHOTOS ── */
+    .photos-section {
+      background: #0a1820;
+      padding-bottom: 110px;
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 6px;
+      margin-top: 44px;
+    }
+    .photo-item {
+      background: var(--dark-teal);
+      border: 1px solid rgba(46,125,156,0.12);
+      overflow: hidden; position: relative;
+    }
+    .photo-item:nth-child(1) { grid-column: span 7; aspect-ratio: 16/10; }
+    .photo-item:nth-child(2) { grid-column: span 5; aspect-ratio: 4/3; }
+    .photo-item:nth-child(3) { grid-column: span 4; aspect-ratio: 4/3; }
+    .photo-item:nth-child(4) { grid-column: span 8; aspect-ratio: 16/9; }
+    .photo-item img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 0.7s ease, filter 0.4s ease;
+      filter: saturate(0.8) brightness(0.88);
+    }
+    .photo-item:hover img {
+      transform: scale(1.04);
+      filter: saturate(1) brightness(1);
+    }
+    .photo-ph {
+      width: 100%; height: 100%; min-height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem; letter-spacing: 0.3em;
+      color: rgba(122,184,200,0.2);
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #0d2030 0%, #112535 100%);
+    }
+
+    /* ── BOOKING ── */
+    .booking-section {
+      background: linear-gradient(180deg, #0a1820 0%, #071318 100%);
+      text-align: center;
+    }
+    .booking-section .container { max-width: 620px; }
+    .booking-section .section-label { justify-content: center; }
+    .booking-section .section-label::after { display: none; }
+
+    .booking-section h2 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+      font-weight: 400;
+      color: var(--warm-white);
+      margin-bottom: 14px;
+    }
+    .booking-section > .container > p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      font-weight: 300;
+      margin-bottom: 48px;
+    }
+    .booking-card {
+      display: inline-flex; flex-direction: column; align-items: center; gap: 8px;
+      padding: 36px 56px;
+      border: 1px solid rgba(46,125,156,0.28);
+      background: rgba(46,125,156,0.04);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative; overflow: hidden;
+    }
+    .booking-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(46,125,156,0.08), transparent);
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    .booking-card:hover::before { opacity: 1; }
+    .booking-card:hover {
+      border-color: rgba(46,125,156,0.55);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(46,125,156,0.12);
+    }
+    .booking-card .card-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem; letter-spacing: 0.38em;
+      color: var(--water-blue); text-transform: uppercase;
+    }
+    .booking-card .card-email {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.35rem;
+      color: var(--warm-white);
+      font-weight: 300; font-style: italic;
+    }
+
+    .social-row {
+      margin-top: 52px;
+      display: flex; align-items: center; justify-content: center; gap: 28px;
+    }
+    .social-row a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem; letter-spacing: 0.3em;
+      color: var(--text-muted); text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.25s ease;
+    }
+    .social-row a:hover { color: var(--pale-water); }
+    .social-row .dot {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: rgba(122,184,200,0.25);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 36px 20px; text-align: center;
+      border-top: 1px solid rgba(46,125,156,0.08);
+      background: #060f16;
+    }
+    footer p {
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem; letter-spacing: 0.3em;
+      color: rgba(122,184,200,0.22);
+      text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .photo-item:nth-child(1),
+      .photo-item:nth-child(2) { grid-column: span 12; }
+      .photo-item:nth-child(3),
+      .photo-item:nth-child(4) { grid-column: span 6; }
+      .booking-card { padding: 28px 36px; }
+      .pull-quote { padding: 22px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-rings">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="logo-wrap">
+      <img src="wolfthump_logo.png" alt="Wolfthump">
+    </div>
+    <p class="hero-tagline">Chico, California &nbsp;·&nbsp; Afro-Brazilian Drumline</p>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- VIDEO -->
+  <section class="video-section">
+    <div class="video-wrap">
+      <!--
+        When your montage is ready, replace the placeholder below with:
+        YouTube: <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" allowfullscreen></iframe>
+        Vimeo:   <iframe src="https://player.vimeo.com/video/YOUR_VIDEO_ID" allowfullscreen></iframe>
+      -->
+      <div class="video-placeholder">
+        <div class="play-ring"></div>
+        <p>Video coming soon</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section">
+    <div class="container reveal">
+      <div class="section-label">About</div>
+      <h2>The <em>wildly beating heart</em><br>of every room they enter</h2>
+      <p>If there were such a distinction, Mike Wofchuck would be Chico's "drummer laureate." Since the Bay Area native came to Chico in 1988, he's provided a wide range of beats for some of the area's most beloved musical acts — the original drummer for The Mother Hips, and a past member of MaMuse alongside Karisha Longaker and Sarah Nutting.</p>
+      <p>In recent years he's led Wolfthump — an Afro-Brazilian drumline featuring an eclectic collection of local artists and musicians. They are the wildly beating heart of every festival, concert, and community event they show up to.</p>
+      <div class="pull-quote">
+        <blockquote>"There's an idea that your mind isn't the main perceiver of that music — it's more of a feeling. It really hits you in the heart. People look for that. They want a release."</blockquote>
+        <cite>— Mike Wofchuck, Bandleader</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHOTOS -->
+  <section class="photos-section">
+    <div class="container">
+      <div class="section-label reveal">Photos</div>
+      <div class="photo-grid reveal">
+        <!--
+          Replace .photo-ph divs with your actual images:
+          <img src="photos/show1.jpg" alt="Wolfthump performing at...">
+        -->
+        <div class="photo-item"><div class="photo-ph">Photo</div></div>
+        <div class="photo-item"><div class="photo-ph">Photo</div></div>
+        <div class="photo-item"><div class="photo-ph">Photo</div></div>
+        <div class="photo-item"><div class="photo-ph">Photo</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING -->
+  <section class="booking-section">
+    <div class="container reveal">
+      <div class="section-label">Book Wolfthump</div>
+      <h2>Bring the Groove<br>to Your Event</h2>
+      <p>Festivals · Concerts · Community events · Private gatherings<br>For booking inquiries, reach out directly.</p>
+      <a href="mailto:booking@wolfthump.com" class="booking-card">
+        <span class="card-label">Booking</span>
+        <span class="card-email">booking@wolfthump.com</span>
+      </a>
+      <div class="social-row">
+        <a href="#" target="_blank" rel="noopener">Bandcamp</a>
+        <div class="dot"></div>
+        <a href="#" target="_blank" rel="noopener">Facebook</a>
+        <div class="dot"></div>
+        <a href="#" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Wolfthump &nbsp;·&nbsp; Chico, California &nbsp;·&nbsp; For the Love of the Groove</p>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
