@@ -1,3 +1,5 @@
+html { background-color: #091820; }
+
 :root {
   --deep-water: #0d1f2d;
   --dark-teal: #112a35;
@@ -382,4 +384,19 @@ footer p {
   .photo-item:nth-child(4) { grid-column: span 6; }
   .booking-card { padding: 28px 36px; }
   .pull-quote { padding: 22px 24px; }
+}
+
+/* ── WATER CANVAS ── */
+#water-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  mix-blend-mode: screen;
+  opacity: 0.15;
+}
+@media (prefers-reduced-motion: reduce) {
+  #water-canvas { display: none; }
 }
