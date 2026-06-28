@@ -118,6 +118,9 @@
       resize();
       window.addEventListener('resize', resize, { passive: true });
       window.addEventListener('scroll', onScroll, { passive: true });
+      // Seed some initial motion so the surface is never flat on load / at rest
+      lakeWave(window.innerHeight * 0.35, 1.2, 0.05, Math.random() * Math.PI * 2);
+      lakeWave(window.innerHeight * 0.7, 0.9, 0.06, Math.random() * Math.PI * 2);
       requestAnimationFrame(tick);
     }
 
@@ -198,8 +201,9 @@
     function tick() {
       frame++;
       if (!isScrolling) {
-        // Gentle ambient wave every ~3.5 seconds
-        if (frame % 210 === 0) {
+        // Gentle ambient wave every ~1.5 seconds so the surface keeps moving
+        // when idle (e.g. parked at the top of the page) without a dead gap.
+        if (frame % 90 === 0) {
           lakeWave(
             window.innerHeight * (0.15 + Math.random() * 0.7),
             1.0 + Math.random() * 0.8,
@@ -207,8 +211,8 @@
             Math.random() * Math.PI * 2
           );
         }
-        // Occasional crossing wave for natural interference
-        if (frame % 350 === 0) {
+        // Offset crossing wave for natural interference (~every 2.3s)
+        if (frame % 140 === 70) {
           lakeWave(
             window.innerHeight * (0.1 + Math.random() * 0.8),
             0.6,
