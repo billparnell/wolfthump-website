@@ -56,6 +56,9 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [ ] **`/security-review` before announcing the form.**
 
 ### Later
+- [ ] When wolfthump.com points at the site: add it to the Turnstile widget's
+      hostnames (Cloudflare → Turnstile → Wolfthump booking). It's already in
+      `ALLOWED_ORIGINS`.
 - [ ] Booking mailbox: NameSilo free email forwarding for `booking@wolfthump.com`,
       then set `MAIL_TO` and/or `MAIL_REPLY_TO`. Needs Mike's call.
 - [ ] Social links in the booking section are still `href="#"`.
