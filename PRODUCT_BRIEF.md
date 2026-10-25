@@ -28,6 +28,9 @@ The page's main job is to turn a visitor into a booking inquiry.
   form backend is a separate Cloudflare Worker on `workers.dev`, so neither has
   to move. See `TECH_DESIGN.md`.
 
+- **2026-10-25: The address is `https://wolfthump.com`** (no `www`). The `www`
+  form and the old github.io link redirect to it.
+
 ## Out of scope (for now)
 - Calendars, pricing, availability, payments.
 - Any login or admin.

@@ -16,6 +16,21 @@
 live site. The repo itself is public on github.com, so **never commit a secret**.
 All secrets live in Cloudflare, set with `wrangler secret put`.
 
+**Domain (2026-10-25):** `https://wolfthump.com` is the main address; the
+`CNAME` file in the repo root tells GitHub Pages that, and GitHub redirects
+`www.wolfthump.com` and the old `billparnell.github.io/wolfthump-website/` to it.
+NameSilo DNS (Bill has a sub-user on Mike's account, limited to this domain):
+
+| Name | Type | Value |
+|---|---|---|
+| `@` | A | `185.199.108.153`, `.109.153`, `.110.153`, `.111.153` (four rows) |
+| `www` | CNAME | `billparnell.github.io` |
+| `_domainconnect` | TXT | NameSilo's own; leave it |
+
+The NameSilo parking records (Service "Forwarding") were deleted. NameSilo's
+add-record form won't take a blank hostname: use `@` for the bare domain. There
+are no MX records yet, so the domain receives no email.
+
 **URL:** the site is `index.html` (renamed 2026-10-25; before that the bare
 URL showed the README). `wolfthump_index.html` is now a `noindex` redirect to
 `./` that keeps the `#hash`, so links already shared still work.

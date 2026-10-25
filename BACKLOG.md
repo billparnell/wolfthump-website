@@ -67,9 +67,19 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [x] `MAIL_TO` takes a comma-separated list. Worker redeployed. Bill sets
       `MAIL_TO` to both his and Mike's addresses.
 - [ ] Before each push: offer `/code-review`.
-- [ ] When wolfthump.com points at the site: add it to the Turnstile widget's
-      hostnames (Cloudflare → Turnstile → Wolfthump booking). It's already in
-      `ALLOWED_ORIGINS`.
+- [x] Post-push checks: docs and `worker/` 404 on the live site; redirect and
+      favicon 200.
+- [ ] **wolfthump.com go-live** (in progress 2026-10-25):
+  - [x] Bill has a NameSilo sub-user on Mike's account.
+  - [x] NameSilo DNS: parking records deleted; four GitHub A records on `@`,
+        `www` CNAME → `billparnell.github.io` (see TECH_DESIGN "Domain").
+  - [x] `CNAME` file (`wolfthump.com`) committed.
+  - [ ] Bill: Cloudflare → Turnstile → Wolfthump booking → add hostname
+        `wolfthump.com`. **Before the push**, or the form fails its human check.
+  - [ ] Bill: push. Then GitHub repo → Settings → Pages: wait for "DNS check
+        successful", tick **Enforce HTTPS** (certificate can take ~1 hour).
+  - [ ] Claude: curl `wolfthump.com`, `www.`, `http://`, and the old github.io
+        URL (all should land on `https://wolfthump.com/`), then send a form test.
 - [ ] Booking mailbox: NameSilo free email forwarding for `booking@wolfthump.com`,
       then set `MAIL_TO` and/or `MAIL_REPLY_TO`. Needs Mike's call.
 - [x] Facebook link is live (`facebook.com/wolfthumpmusic`). Bandcamp and Instagram are
@@ -78,6 +88,11 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 ---
 
 ## Log
+
+- **2026-10-25 (afternoon, with Mike):** Bill set up a NameSilo sub-user and
+  pointed DNS at GitHub Pages. Main address decided: `https://wolfthump.com`.
+  `CNAME` file committed. Waiting on Bill: Turnstile hostname, push, Enforce
+  HTTPS. Then Claude runs the go-live checks above.
 
 ### Where we are (2026-10-25, end of session)
 - **State:** the live site is unchanged and still shows the old
