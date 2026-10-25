@@ -80,6 +80,14 @@ with Cinzel for headings and Crimson Pro for body text, 18px base.
 - **`.hero { overflow: hidden }`**: the 520px decorative rings made the page
   448px wide at 375px, so it could drag sideways on a phone. This was there
   before the form; found during the Phase 2 check.
+- **Turnstile is `data-appearance="interaction-only"`.** The box only shows
+  when Cloudflare wants a click, so most visitors never see it. Chosen
+  2026-10-25 because the always-on box looked clunky.
+- **Bump `?v=` on the stylesheet link whenever `default.css` changes.** GitHub
+  Pages sends `cache-control: max-age=600`. On the first phone test the new
+  HTML arrived with the old CSS, which showed the honeypot, the thank-you card
+  and browser-default inputs. Versioning the link makes the new page fetch the
+  new CSS.
 - **Headless check at 375px:** with the Chrome extension not connected, use
   `groove-bank/tools/cdp.js`. The Phase 2 script drove the real page and Worker
   with Turnstile's test keys and Resend stubbed out.

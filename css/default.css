@@ -355,7 +355,8 @@ section { position: relative; padding: 90px 20px; }
 /* Honeypot: off-screen rather than display:none, which some bots skip. */
 .hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
-.booking-form .cf-turnstile { margin: 4px 0 18px; min-height: 65px; }
+/* interaction-only: empty unless Cloudflare wants a click, so no reserved height. */
+.booking-form .cf-turnstile { margin: 0 0 18px; }
 
 .form-error {
   color: var(--gold);

@@ -91,6 +91,11 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - **Next task:** Phase 2, the form on the page. It needs no accounts, because it
   uses Turnstile's test site key.
 
+- **2026-10-25 (night):** Phone screenshot showed an unstyled form, because
+  GitHub Pages' 10-minute cache served old CSS to the new page. Fixed with
+  `default.css?v=2`. Turnstile is now interaction-only (no box for most people).
+  Security review: no findings. Open: Bill asked about right-justifying the
+  form; decide after he sees the styled version.
 - **2026-10-25 (evening):** Worker deployed with all secrets, real Turnstile key in
   the page, and live curls green. Waiting on: Bill runs `/security-review`, pushes, then
   sends one real message from his phone (Phase 4, first item).
