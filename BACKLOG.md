@@ -38,16 +38,18 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [ ] Cloudflare → Turnstile → add a widget for the page's hostnames → copy the
       site key (goes in the HTML) and the secret key (goes into a Worker secret).
 - [ ] Resend → new API key for this app only (PLAYBOOK §3: one key per app).
-- [ ] `npx wrangler login` in Terminal (not via `!`; PLAYBOOK §9).
-- [ ] `npx wrangler deploy -c worker/wrangler.jsonc`, then
-      `npx wrangler secret put <NAME> -c worker/wrangler.jsonc` for
-      RESEND_API_KEY, TURNSTILE_SECRET, MAIL_TO (Bill's email for now), MAIL_FROM.
+- [x] `npx wrangler login`: already logged in from groove-bank (account bparnell@gmail.com).
+- [x] Deployed: `https://wolfthump-contact.bparnell.workers.dev`. It answers
+      503 "not switched on yet" until all secrets are set (checked with curl).
+- [x] `MAIL_FROM` secret set.
+- [ ] Bill, in his own Terminal: `npx wrangler secret put <NAME> -c worker/wrangler.jsonc`
+      for TURNSTILE_SECRET, RESEND_API_KEY, MAIL_TO (his Gmail for now).
 - [ ] Swap the test site key `1x00000000000000000000AA` in `wolfthump_index.html`
       for the real one. `CONTACT_URL` is already
       `https://wolfthump-contact.bparnell.workers.dev/`; fix it if wrangler
       reports a different URL. Commit, and **don't push the page until
       this is done**, or the live form posts to a Worker that doesn't exist.
-- [ ] Confirm `ALLOWED_ORIGINS` matches where the page is actually served.
+- [x] `ALLOWED_ORIGINS` confirmed: the page is served at `https://billparnell.github.io/wolfthump-website/wolfthump_index.html`.
 
 ### Phase 4 — End-to-end and review
 - [ ] Real submission from the live page on a phone: inquiry arrives, Reply-To
