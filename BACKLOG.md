@@ -49,14 +49,14 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
       the deployed Worker. **Push only after the three secrets above are set.**
 - [x] `ALLOWED_ORIGINS` confirmed: the page is served at `https://billparnell.github.io/wolfthump-website/wolfthump_index.html`.
 
-### Phase 4 — End-to-end and review
-- [ ] Real submission from the live page on a phone: inquiry arrives, Reply-To
-      works, confirmation arrives and doesn't land in spam.
+### Phase 4 — End-to-end and review — ✅ DONE 2026-10-25
+- [x] Real submission from the live page on a phone: inquiry arrives, Reply-To
+      works, confirmation arrives and doesn't land in spam. ✅ Bill confirmed 2026-10-25.
 - [x] Live curls, 2026-10-25: all four secrets listed. A fake or missing
       Turnstile token gets 400, a foreign or missing Origin 403, honeypot a fake
       200, GET 405, and preflight 204 with the right CORS origin. The rate limit
       does engage (429s in a 15-request burst) but only loosely; see TECH_DESIGN.
-- [ ] **`/security-review` before announcing the form.**
+- [x] **`/security-review` before announcing the form.** No findings, 2026-10-25.
 
 ### Later
 - [ ] When wolfthump.com points at the site: add it to the Turnstile widget's
@@ -64,7 +64,8 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
       `ALLOWED_ORIGINS`.
 - [ ] Booking mailbox: NameSilo free email forwarding for `booking@wolfthump.com`,
       then set `MAIL_TO` and/or `MAIL_REPLY_TO`. Needs Mike's call.
-- [ ] Social links in the booking section are still `href="#"`.
+- [x] Facebook link is live (`facebook.com/wolfthumpmusic`). Bandcamp and Instagram are
+      commented out in `wolfthump_index.html` until the band has them.
 - [ ] No favicon (404 in the console on every load).
 
 ---

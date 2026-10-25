@@ -386,7 +386,7 @@ section { position: relative; padding: 90px 20px; }
 .form-thanks p { font-size: 1.35rem; color: var(--warm-white); font-style: italic; font-weight: 300; }
 
 .social-row {
-  margin-top: 52px;
+  margin-top: 32px;
   display: flex; align-items: center; justify-content: center; gap: 28px;
 }
 .social-row a {
@@ -395,6 +395,7 @@ section { position: relative; padding: 90px 20px; }
   color: var(--text-muted); text-decoration: none;
   text-transform: uppercase;
   transition: color 0.25s ease;
+  padding: 20px 8px;  /* tap target >=56px tall; looks unchanged */
 }
 .social-row a:hover { color: var(--pale-water); }
 .social-row .dot {
