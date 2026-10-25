@@ -27,9 +27,33 @@ NameSilo DNS (Bill has a sub-user on Mike's account, limited to this domain):
 | `www` | CNAME | `billparnell.github.io` |
 | `_domainconnect` | TXT | NameSilo's own; leave it |
 
+| `@` | MX | `mx4.emailowl.com` (10), `mx5.emailowl.com` (20), `mx6.emailowl.com` (30) |
+
 The NameSilo parking records (Service "Forwarding") were deleted. NameSilo's
-add-record form won't take a blank hostname: use `@` for the bare domain. There
-are no MX records yet, so the domain receives no email.
+add-record form won't take a blank hostname: use `@` for the bare domain. The
+MX records were added by hand, **not** with NameSilo's "Email Forwarding
+Template", which may replace the site's records.
+
+**booking@wolfthump.com (2026-10-25):** NameSilo's free email forwarding
+(Domain Manager → wolfthump.com → Email Forwarding, at the bottom of the page;
+the paid "email" item in the sidebar is a real mailbox, not needed).
+- **One destination per alias.** NameSilo won't take several addresses or
+  repeat an alias. Today `booking@` → Bill's Gmail; it moves to Mike later.
+- **`MAIL_TO` = Bill's Gmail + `booking@wolfthump.com`**, so the form reaches
+  whoever `booking@` points at. Handing over to Mike is one change in NameSilo;
+  the Worker doesn't change. Until then Bill gets each inquiry twice.
+- **`MAIL_REPLY_TO` = `booking@wolfthump.com`**, so replies to the confirmation
+  email reach the band. The address is on no page; the form is the way in.
+- **Forwarded mail lands in Gmail spam** (the forwarder breaks SPF for the
+  original sender). Fix on each receiving inbox: a Gmail filter To
+  `booking@wolfthump.com` → Never send it to Spam + Categorize as Primary.
+- **Symptom/fix:** a test bounced with `554 5.7.1 Relay access denied` from
+  emailowl. The MX records worked but the forward hadn't reached NameSilo's mail
+  servers yet. It worked after a wait. If it persists, delete and re-add the
+  forward now that MX exists.
+- Free alternative if forwarding gets flaky: Cloudflare Email Routing (needs
+  wolfthump.com's nameservers moved to Cloudflare; one destination per rule,
+  so two inboxes needs an email Worker).
 
 **URL:** the site is `index.html` (renamed 2026-10-25; before that the bare
 URL showed the README). `wolfthump_index.html` is now a `noindex` redirect to

@@ -30,6 +30,9 @@ The page's main job is to turn a visitor into a booking inquiry.
 
 - **2026-10-25: The address is `https://wolfthump.com`** (no `www`). The `www`
   form and the old github.io link redirect to it.
+- **2026-10-25: booking@wolfthump.com exists but isn't published on the page.**
+  It forwards to Bill for now and moves to Mike later. It's the reply address on
+  the confirmation email, and the band can give it out by hand.
 
 ## Out of scope (for now)
 - Calendars, pricing, availability, payments.

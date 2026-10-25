@@ -73,21 +73,33 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
   - [x] Bill has a NameSilo sub-user on Mike's account.
   - [x] NameSilo DNS: parking records deleted; four GitHub A records on `@`,
         `www` CNAME → `billparnell.github.io` (see TECH_DESIGN "Domain").
-  - [x] `CNAME` file (`wolfthump.com`) committed.
-  - [ ] Bill: Cloudflare → Turnstile → Wolfthump booking → add hostname
-        `wolfthump.com`. **Before the push**, or the form fails its human check.
-  - [ ] Bill: push. Then GitHub repo → Settings → Pages: wait for "DNS check
-        successful", tick **Enforce HTTPS** (certificate can take ~1 hour).
-  - [ ] Claude: curl `wolfthump.com`, `www.`, `http://`, and the old github.io
-        URL (all should land on `https://wolfthump.com/`), then send a form test.
-- [ ] Booking mailbox: NameSilo free email forwarding for `booking@wolfthump.com`,
-      then set `MAIL_TO` and/or `MAIL_REPLY_TO`. Needs Mike's call.
+  - [x] `CNAME` file (`wolfthump.com`) committed and pushed.
+  - [x] Turnstile hostname `wolfthump.com` added; Bill's form test passed.
+  - [x] Certificate issued (Let's Encrypt, 2026-10-25). `https://wolfthump.com`,
+        `www.` and the old github.io link all land on the site.
+  - [ ] **Bill: GitHub repo → Settings → Pages → tick Enforce HTTPS.** As of
+        2026-10-25 `http://wolfthump.com` still serves plain http, and the old
+        github.io link forwards to `http://`. Then Claude rechecks with curl.
+- [x] **booking@wolfthump.com** forwards to Bill's Gmail (NameSilo, free).
+      `MAIL_TO` = Bill's Gmail + booking@, `MAIL_REPLY_TO` = booking@. See
+      TECH_DESIGN "booking@wolfthump.com".
+- [ ] **Hand booking@ to Mike** (when he's ready): NameSilo → Email Forwarding →
+      change `booking`'s destination to Mike's address. Then have Mike add a
+      never-spam rule for mail To `booking@wolfthump.com` in his mail app. Then
+      Bill may drop his Gmail from `MAIL_TO` (`npx wrangler secret put MAIL_TO
+      -c worker/wrangler.jsonc`, value `booking@wolfthump.com`).
 - [x] Facebook link is live (`facebook.com/wolfthumpmusic`). Bandcamp and Instagram are
       commented out in `index.html` until the band has them.
 
 ---
 
 ## Log
+
+- **2026-10-25 (late afternoon):** wolfthump.com is live on GitHub Pages with a
+  certificate. booking@wolfthump.com forwards to Bill's Gmail via NameSilo;
+  `MAIL_TO` and `MAIL_REPLY_TO` updated, form test passed. Bill added a Gmail
+  never-spam filter for booking@. Open: tick Enforce HTTPS; later, hand booking@
+  to Mike.
 
 - **2026-10-25 (afternoon, with Mike):** Bill set up a NameSilo sub-user and
   pointed DNS at GitHub Pages. Main address decided: `https://wolfthump.com`.
