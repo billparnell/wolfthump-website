@@ -1,7 +1,7 @@
 # Wolfthump — Product Brief
 
 ## What it is
-A one-page website for Wolfthump, Mike Wofchuck's Afro-Brazilian batucada /
+A one-page website for Wolfthump, Mike Wofchuck's Afro-Brazilian bateria /
 drum-funk drumline out of Chico, CA. Hero, video, about, photos, booking.
 
 ## Who it's for
