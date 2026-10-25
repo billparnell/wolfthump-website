@@ -44,11 +44,9 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [x] `MAIL_FROM` secret set.
 - [ ] Bill, in his own Terminal: `npx wrangler secret put <NAME> -c worker/wrangler.jsonc`
       for TURNSTILE_SECRET, RESEND_API_KEY, MAIL_TO (his Gmail for now).
-- [ ] Swap the test site key `1x00000000000000000000AA` in `wolfthump_index.html`
-      for the real one. `CONTACT_URL` is already
-      `https://wolfthump-contact.bparnell.workers.dev/`; fix it if wrangler
-      reports a different URL. Commit, and **don't push the page until
-      this is done**, or the live form posts to a Worker that doesn't exist.
+- [x] Real Turnstile site key `0x4AAAAAAFlmLSyv_cTDlIYJ` is in the page (widget
+      "Wolfthump booking", hostname `billparnell.github.io`). `CONTACT_URL` matches
+      the deployed Worker. **Push only after the three secrets above are set.**
 - [x] `ALLOWED_ORIGINS` confirmed: the page is served at `https://billparnell.github.io/wolfthump-website/wolfthump_index.html`.
 
 ### Phase 4 — End-to-end and review
