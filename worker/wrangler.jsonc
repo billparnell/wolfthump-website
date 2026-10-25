@@ -1,0 +1,22 @@
+// Deploy config for the booking-form Worker. Deployed by hand from the Mac:
+//   npx wrangler deploy -c worker/wrangler.jsonc
+// The site itself is on GitHub Pages and is not part of this deploy.
+// Secrets are listed at the top of contact.mjs and set with `wrangler secret
+// put` — never here, because GitHub Pages publishes this whole repo.
+{
+  "name": "wolfthump-contact",
+  "main": "./contact.mjs",
+  "compatibility_date": "2026-10-25",
+
+  "vars": {
+    // Every origin the page is served from. Update when wolfthump.com points
+    // at the site.
+    "ALLOWED_ORIGINS": "https://billparnell.github.io,https://wolfthump.com,https://www.wolfthump.com"
+  },
+
+  // Per-IP: 3 submissions a minute. Turnstile is the real gate; this caps
+  // anyone who gets past it. namespace_id is any number unique to the account.
+  "ratelimits": [
+    { "name": "LIMITER", "namespace_id": "4101", "simple": { "limit": 3, "period": 60 } }
+  ]
+}
