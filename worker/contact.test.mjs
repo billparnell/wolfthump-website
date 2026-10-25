@@ -57,6 +57,13 @@ test('MAIL_REPLY_TO sets the confirmation reply-to', async () => {
   assert.equal(emails()[1].reply_to, 'booking@wolfthump.com');
 });
 
+test('MAIL_TO may list several inboxes, comma-separated', async () => {
+  await post(GOOD, { env: { ...ENV, MAIL_TO: 'a@example.com, b@example.com,' } });
+  const [inquiry, confirm] = emails();
+  assert.deepEqual(inquiry.to, ['a@example.com', 'b@example.com']);
+  assert.doesNotMatch(JSON.stringify(confirm), /a@example|b@example/);
+});
+
 test('honeypot and too-fast submissions fake success and send nothing', async () => {
   for (const body of [{ ...GOOD, website: 'http://x' }, { ...GOOD, elapsed: 500 }, { ...GOOD, elapsed: undefined }]) {
     calls = [];

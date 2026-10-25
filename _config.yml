@@ -1,0 +1,11 @@
+# GitHub Pages builds this repo with Jekyll. Publish only the site itself:
+# the docs and the Worker are for us, not the web. They stay readable on
+# github.com because the repo is public. This only keeps them off the site.
+# Anything new at the repo root that isn't part of the site goes here too.
+exclude:
+  - README.md
+  - BACKLOG.md
+  - CLAUDE.md
+  - PRODUCT_BRIEF.md
+  - TECH_DESIGN.md
+  - worker/

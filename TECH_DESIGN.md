@@ -1,7 +1,7 @@
 # Wolfthump — Tech & Design
 
 ## Stack
-- **Site:** one static HTML page (`wolfthump_index.html`) + `css/default.css`,
+- **Site:** one static HTML page (`index.html`) + `css/default.css`,
   hosted on **GitHub Pages**. No build step. DNS for wolfthump.com is at
   **NameSilo**.
 - **Booking form backend:** a Cloudflare Worker, `worker/contact.mjs`, deployed
@@ -10,9 +10,20 @@
   wrangler login and secrets steps do.
 - **Email:** Resend HTTP API.
 
-⚠️ **GitHub Pages publishes the whole repo**, including `worker/` and these
-docs. That's fine as long as no secret is ever committed. All secrets live in
-Cloudflare, set with `wrangler secret put`.
+**What's published:** GitHub Pages builds the repo with Jekyll, and
+`_config.yml` excludes the docs and `worker/` (2026-10-25). Before that,
+`/BACKLOG.html`, `/CLAUDE.md` and `/worker/contact.mjs` were all served on the
+live site. The repo itself is public on github.com, so **never commit a secret**.
+All secrets live in Cloudflare, set with `wrangler secret put`.
+
+**URL:** the site is `index.html` (renamed 2026-10-25; before that the bare
+URL showed the README). `wolfthump_index.html` is now a `noindex` redirect to
+`./` that keeps the `#hash`, so links already shared still work.
+
+**Favicon:** `img/favicon-32.png` and `img/apple-touch-icon.png` (180px). Both
+are the bullseye drum from the logo's centre, cropped to the rings, inverted to
+cream on `--deep-water`, and rendered with headless Chrome. The full crest is
+mush below 64px.
 
 ## Booking form
 
@@ -31,7 +42,8 @@ in order:
 | **Cloudflare Turnstile** verified server-side | the real human check | 400 "complete the check" |
 
 Then two emails go out through Resend:
-1. **Inquiry → `MAIL_TO`**, with `Reply-To` set to the sender, so answering is just
+1. **Inquiry → `MAIL_TO`**, which can be a comma-separated list (one email,
+   every inbox on the To line), with `Reply-To` set to the sender, so answering is just
    pressing reply.
 2. **Confirmation → the sender.** The wording is fixed and contains **nothing
    the sender typed**, not even their name. Otherwise the form could send a
@@ -53,7 +65,7 @@ and `ALLOWED_ORIGINS` plus the rate limit are in `worker/wrangler.jsonc`.
 domain (PLAYBOOK §3), so there's no DNS work at NameSilo. Moving to
 `@wolfthump.com` later means verifying it in Resend and changing that one secret.
 
-**The page side** is in `wolfthump_index.html`, in the inline script next to the
+**The page side** is in `index.html`, in the inline script next to the
 form. It does the same empty, email and Turnstile checks before sending, so a
 visitor sees the message without a round trip. It sends
 `{name,email,message,website,elapsed,turnstile}` to `CONTACT_URL`, the constant

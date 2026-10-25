@@ -9,7 +9,7 @@
 // served publicly by GitHub Pages):
 //   RESEND_API_KEY    re_… sending key
 //   TURNSTILE_SECRET  Cloudflare Turnstile secret key
-//   MAIL_TO           where inquiries land — personal inbox for now
+//   MAIL_TO           where inquiries land; comma-separated for several inboxes
 //   MAIL_FROM         e.g. "Wolfthump <wolfthump@parnellprojects.com>"
 //   MAIL_REPLY_TO     optional — Reply-To on the confirmation. Leave unset until
 //                     a public booking address exists; never set it to MAIL_TO.
@@ -89,7 +89,7 @@ async function sendEmail(env, message) {
 
 function inquiryEmail(env, { name, email, message }) {
   return {
-    to: [env.MAIL_TO],
+    to: env.MAIL_TO.split(',').map(s => s.trim()).filter(Boolean),
     reply_to: email,
     subject: 'Booking inquiry from ' + name,
     text: `New message from the Wolfthump website.\n\n` +

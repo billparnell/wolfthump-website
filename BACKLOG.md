@@ -38,7 +38,7 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [x] Cloudflare → Turnstile → add a widget for the page's hostnames → copy the
       site key (goes in the HTML) and the secret key (goes into a Worker secret).
 - [x] Resend → new API key for this app only (PLAYBOOK §3: one key per app).
-- [x] `npx wrangler login`: already logged in from groove-bank (account bparnell@gmail.com).
+- [x] `npx wrangler login`: already logged in from groove-bank.
 - [x] Deployed: `https://wolfthump-contact.bparnell.workers.dev`. It answers
       503 "not switched on yet" until all secrets are set (checked with curl).
 - [x] `MAIL_FROM` secret set.
@@ -59,10 +59,13 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [x] **`/security-review` before announcing the form.** No findings, 2026-10-25.
 
 ### Later
-- [ ] **The bare URL `billparnell.github.io/wolfthump-website/` shows the README**,
-      not the site, because there's no `index.html`. Fix: rename
-      `wolfthump_index.html` to `index.html` and leave a tiny redirect at the
-      old name so links already shared keep working. Waiting on Bill's go-ahead.
+- [x] Site renamed to `index.html`, so the bare URL works. `wolfthump_index.html`
+      redirects there. Verify after push: `curl -sL <base>/wolfthump_index.html`.
+- [x] `_config.yml` keeps docs and `worker/` off the live site. **After the push,
+      check that `/BACKLOG.html`, `/CLAUDE.md` and `/worker/contact.mjs` return 404.**
+- [x] Favicon and apple-touch icon, from the logo's drum.
+- [x] `MAIL_TO` takes a comma-separated list. Worker redeployed. Bill sets
+      `MAIL_TO` to both his and Mike's addresses.
 - [ ] Before each push: offer `/code-review`.
 - [ ] When wolfthump.com points at the site: add it to the Turnstile widget's
       hostnames (Cloudflare → Turnstile → Wolfthump booking). It's already in
@@ -70,8 +73,7 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [ ] Booking mailbox: NameSilo free email forwarding for `booking@wolfthump.com`,
       then set `MAIL_TO` and/or `MAIL_REPLY_TO`. Needs Mike's call.
 - [x] Facebook link is live (`facebook.com/wolfthumpmusic`). Bandcamp and Instagram are
-      commented out in `wolfthump_index.html` until the band has them.
-- [ ] No favicon (404 in the console on every load).
+      commented out in `index.html` until the band has them.
 
 ---
 
@@ -97,6 +99,10 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - **Next task:** Phase 2, the form on the page. It needs no accounts, because it
   uses Turnstile's test site key.
 
+- **2026-10-25 (wrap-up):** Renamed to `index.html` with a redirect, excluded the
+  docs and Worker from Pages, added the favicon, and `MAIL_TO` now accepts several
+  inboxes. Pending on Bill: push, set `MAIL_TO` for both inboxes, and run the
+  post-push 404 checks above.
 - **2026-10-25 (late night):** The form is live and working (Bill's phone test passed).
   Facebook is linked, Bandcamp and Instagram are hidden, CSS is at `?v=3`. Booking-form
   Phases 1–4 are done. Next is the Later list; the top item is the index.html rename.
