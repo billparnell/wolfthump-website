@@ -59,6 +59,11 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [x] **`/security-review` before announcing the form.** No findings, 2026-10-25.
 
 ### Later
+- [ ] **The bare URL `billparnell.github.io/wolfthump-website/` shows the README**,
+      not the site, because there's no `index.html`. Fix: rename
+      `wolfthump_index.html` to `index.html` and leave a tiny redirect at the
+      old name so links already shared keep working. Waiting on Bill's go-ahead.
+- [ ] Before each push: offer `/code-review`.
 - [ ] When wolfthump.com points at the site: add it to the Turnstile widget's
       hostnames (Cloudflare → Turnstile → Wolfthump booking). It's already in
       `ALLOWED_ORIGINS`.
@@ -92,6 +97,9 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - **Next task:** Phase 2, the form on the page. It needs no accounts, because it
   uses Turnstile's test site key.
 
+- **2026-10-25 (late night):** The form is live and working (Bill's phone test passed).
+  Facebook is linked, Bandcamp and Instagram are hidden, CSS is at `?v=3`. Booking-form
+  Phases 1–4 are done. Next is the Later list; the top item is the index.html rename.
 - **2026-10-25 (night):** Phone screenshot showed an unstyled form, because
   GitHub Pages' 10-minute cache served old CSS to the new page. Fixed with
   `default.css?v=2`. Turnstile is now interaction-only (no box for most people).
