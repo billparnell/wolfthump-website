@@ -83,11 +83,11 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [x] **booking@wolfthump.com** forwards to Bill's Gmail (NameSilo, free).
       `MAIL_TO` = Bill's Gmail + booking@, `MAIL_REPLY_TO` = booking@. See
       TECH_DESIGN "booking@wolfthump.com".
-- [ ] **Hand booking@ to Mike** (when he's ready): NameSilo → Email Forwarding →
-      change `booking`'s destination to Mike's address. Then have Mike add a
-      never-spam rule for mail To `booking@wolfthump.com` in his mail app. Then
-      Bill may drop his Gmail from `MAIL_TO` (`npx wrangler secret put MAIL_TO
-      -c worker/wrangler.jsonc`, value `booking@wolfthump.com`).
+- [x] **booking@ handed to Mike** (2026-10-25): NameSilo forward `booking` →
+      Mike's personal email. `MAIL_TO` = `booking@wolfthump.com, Bill's Gmail`,
+      so each inquiry reaches Mike (via forward) and Bill (direct).
+- [ ] Mike: never-spam rule in his mail app for mail To `booking@wolfthump.com`
+      (forwarded mail tends to land in spam). Then one test from a third address.
 - [x] Facebook link is live (`facebook.com/wolfthumpmusic`). Bandcamp and Instagram are
       commented out in `index.html` until the band has them.
 
@@ -100,6 +100,9 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
   `MAIL_TO` and `MAIL_REPLY_TO` updated, form test passed. Bill added a Gmail
   never-spam filter for booking@. Open: tick Enforce HTTPS; later, hand booking@
   to Mike.
+- **2026-10-25 (evening):** booking@ now forwards to Mike; `MAIL_TO` is booking@ +
+  Bill's Gmail. Bill ticked Enforce HTTPS; at last check `http://` hadn't started
+  redirecting yet (GitHub can lag). Open: confirm the redirect, Mike's spam rule.
 
 - **2026-10-25 (afternoon, with Mike):** Bill set up a NameSilo sub-user and
   pointed DNS at GitHub Pages. Main address decided: `https://wolfthump.com`.

@@ -38,10 +38,11 @@ Template", which may replace the site's records.
 (Domain Manager → wolfthump.com → Email Forwarding, at the bottom of the page;
 the paid "email" item in the sidebar is a real mailbox, not needed).
 - **One destination per alias.** NameSilo won't take several addresses or
-  repeat an alias. Today `booking@` → Bill's Gmail; it moves to Mike later.
-- **`MAIL_TO` = Bill's Gmail + `booking@wolfthump.com`**, so the form reaches
-  whoever `booking@` points at. Handing over to Mike is one change in NameSilo;
-  the Worker doesn't change. Until then Bill gets each inquiry twice.
+  repeat an alias. `booking@` → Mike's personal email (since 2026-10-25;
+  briefly Bill's Gmail while testing).
+- **`MAIL_TO` = `booking@wolfthump.com` + Bill's Gmail**, so the form reaches
+  whoever `booking@` points at, plus Bill directly. Changing who answers is one
+  edit in NameSilo; the Worker doesn't change.
 - **`MAIL_REPLY_TO` = `booking@wolfthump.com`**, so replies to the confirmation
   email reach the band. The address is on no page; the form is the way in.
 - **Forwarded mail lands in Gmail spam** (the forwarder breaks SPF for the
