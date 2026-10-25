@@ -48,9 +48,18 @@ which check caught it.
 **Config:** the secrets and vars are listed at the top of `worker/contact.mjs`,
 and `ALLOWED_ORIGINS` plus the rate limit are in `worker/wrangler.jsonc`.
 
-**Sender domain (open, decide in Phase 3):** either reuse the already-verified
-`parnellprojects.com` (no DNS work; PLAYBOOK §3) or verify `wolfthump.com` by
-adding Resend's records at NameSilo. Either way it's only `MAIL_FROM`.
+**Sender domain, decided 2026-10-25:** `MAIL_FROM` is
+`Wolfthump <wolfthump@parnellprojects.com>`, reusing the already-verified shared
+domain (PLAYBOOK §3), so there's no DNS work at NameSilo. Moving to
+`@wolfthump.com` later means verifying it in Resend and changing that one secret.
+
+**The page side** is in `wolfthump_index.html`, in the inline script next to the
+form. It does the same empty, email and Turnstile checks before sending, so a
+visitor sees the message without a round trip. It sends
+`{name,email,message,website,elapsed,turnstile}` to `CONTACT_URL`, the constant
+at the top of that script, then swaps the form for the thank-you card. On an
+error it shows the Worker's message, keeps what they typed, and resets
+Turnstile, because each token works only once.
 
 ## Tests
 `node --test worker/contact.test.mjs`. It needs no dependencies, mocks `fetch`,
@@ -59,3 +68,18 @@ and covers every row of the table above.
 ## Visual system
 Tokens are on `:root` in `css/default.css` (deep-water / teal / cream / gold),
 with Cinzel for headings and Crimson Pro for body text, 18px base.
+
+- **`.booking-card`** is the one card in the booking area. The form and the
+  thank-you are both one. Field labels and inputs are 1.15rem (18.4px), and
+  inputs and the button are at least 56px tall.
+- **Error text is `--gold`.** There's no red in this palette, and gold reads as
+  "look here" without clashing.
+- **`[hidden] { display: none !important }`** is a global rule. Any component
+  that sets `display` would otherwise beat the `hidden` attribute. The Phase 2
+  check caught exactly that bug: the thank-you card was always visible.
+- **`.hero { overflow: hidden }`**: the 520px decorative rings made the page
+  448px wide at 375px, so it could drag sideways on a phone. This was there
+  before the form; found during the Phase 2 check.
+- **Headless check at 375px:** with the Chrome extension not connected, use
+  `groove-bank/tools/cdp.js`. The Phase 2 script drove the real page and Worker
+  with Turnstile's test keys and Resend stubbed out.

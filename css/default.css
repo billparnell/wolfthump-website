@@ -13,6 +13,8 @@ html { background-color: #091820; }
   --text-muted: #9ab5be;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
+/* Components set display; this keeps the hidden attribute working on them. */
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body {
   background-color: var(--deep-water);
@@ -43,6 +45,7 @@ body::before {
   justify-content: center;
   position: relative;
   padding: 60px 20px 80px;
+  overflow: hidden;  /* the 520px rings otherwise widen the page on phones */
   background:
     radial-gradient(ellipse 70% 55% at 50% 35%, rgba(46,125,156,0.16) 0%, transparent 70%),
     linear-gradient(180deg, #091820 0%, #0d1f2d 60%, #0a1c2a 100%);
@@ -303,38 +306,83 @@ section { position: relative; padding: 90px 20px; }
   font-weight: 300;
   margin-bottom: 48px;
 }
+/* One card family for the booking area: the form and the thank-you share it. */
 .booking-card {
-  display: inline-flex; flex-direction: column; align-items: center; gap: 8px;
-  padding: 36px 56px;
+  display: block;
+  padding: 36px 32px;
   border: 1px solid rgba(46,125,156,0.28);
   background: rgba(46,125,156,0.04);
-  text-decoration: none;
-  transition: all 0.3s ease;
-  position: relative; overflow: hidden;
-}
-.booking-card::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(46,125,156,0.08), transparent);
-  opacity: 0; transition: opacity 0.3s ease;
-}
-.booking-card:hover::before { opacity: 1; }
-.booking-card:hover {
-  border-color: rgba(46,125,156,0.55);
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(46,125,156,0.12);
+  text-align: left;
 }
 .booking-card .card-label {
+  display: block;
   font-family: 'Cinzel', serif;
   font-size: 0.62rem; letter-spacing: 0.38em;
   color: var(--water-blue); text-transform: uppercase;
+  margin-bottom: 8px;
 }
-.booking-card .card-email {
-  font-family: 'Crimson Pro', serif;
-  font-size: 1.35rem;
+
+.booking-form .field { margin-bottom: 22px; }
+.booking-form label {
+  display: block;
+  font-size: 1.15rem;
   color: var(--warm-white);
-  font-weight: 300; font-style: italic;
+  margin-bottom: 6px;
 }
+.booking-form input,
+.booking-form textarea {
+  display: block;
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 16px;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 1.15rem;  /* >=16px also stops iOS zooming in on focus */
+  color: var(--warm-white);
+  background: var(--deep-water);
+  border: 1px solid rgba(46,125,156,0.45);
+  border-radius: 4px;
+}
+.booking-form textarea { min-height: 150px; resize: vertical; line-height: 1.5; }
+.booking-form input::placeholder,
+.booking-form textarea::placeholder { color: var(--text-muted); opacity: 1; }
+.booking-form input:focus,
+.booking-form textarea:focus {
+  outline: 2px solid var(--pale-water);
+  outline-offset: 1px;
+  border-color: var(--pale-water);
+}
+
+/* Honeypot: off-screen rather than display:none, which some bots skip. */
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.booking-form .cf-turnstile { margin: 4px 0 18px; min-height: 65px; }
+
+.form-error {
+  color: var(--gold);
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+}
+
+.form-button {
+  display: block;
+  width: 100%;
+  min-height: 56px;
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--warm-white);
+  background: var(--water-blue);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+.form-button:hover { background: var(--mid-teal); }
+.form-button:focus-visible { outline: 2px solid var(--pale-water); outline-offset: 2px; }
+.form-button:disabled { opacity: 0.6; cursor: wait; }
+
+.form-thanks { text-align: center; }
+.form-thanks:focus { outline: none; }
+.form-thanks p { font-size: 1.35rem; color: var(--warm-white); font-style: italic; font-weight: 300; }
 
 .social-row {
   margin-top: 52px;
@@ -387,7 +435,7 @@ footer p {
   .photo-item:nth-child(2) { grid-column: span 12; }
   .photo-item:nth-child(3),
   .photo-item:nth-child(4) { grid-column: span 6; }
-  .booking-card { padding: 28px 36px; }
+  .booking-card { padding: 24px 16px; }
   .pull-quote { padding: 22px 24px; }
 }
 

@@ -75,11 +75,33 @@
     <div class="container reveal">
       <div class="section-label">Book Wolfthump</div>
       <h2>Bring the Groove<br>to Your Event</h2>
-      <p>Festivals · Concerts · Community events · Private gatherings<br>For booking inquiries, reach out directly.</p>
-      <a href="mailto:booking@wolfthump.com" class="booking-card">
-        <span class="card-label">Booking</span>
-        <span class="card-email">booking@wolfthump.com</span>
-      </a>
+      <p>Festivals · Concerts · Community events · Private gatherings<br>Send us a note and we'll get back to you.</p>
+      <form class="booking-card booking-form" id="booking-form" novalidate>
+        <div class="field">
+          <label for="bf-name">Your name</label>
+          <input id="bf-name" name="name" type="text" autocomplete="name" maxlength="100" required>
+        </div>
+        <div class="field">
+          <label for="bf-email">Your email</label>
+          <input id="bf-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required>
+        </div>
+        <div class="field">
+          <label for="bf-message">Message</label>
+          <textarea id="bf-message" name="message" rows="5" maxlength="5000" required placeholder="Tell us about your event: the date, the place, and what you have in mind."></textarea>
+        </div>
+        <!-- Honeypot: hidden from people, filled in by bots. See TECH_DESIGN.md. -->
+        <div class="hp-field" aria-hidden="true">
+          <label for="bf-website">Leave this empty</label>
+          <input id="bf-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="dark" data-size="flexible"></div>
+        <p class="form-error" id="bf-error" role="alert" hidden></p>
+        <button type="submit" class="form-button" id="bf-send">Send message</button>
+      </form>
+      <div class="booking-card form-thanks" id="bf-thanks" tabindex="-1" hidden>
+        <span class="card-label">Message sent</span>
+        <p>Thanks! We'll be in touch soon.</p>
+      </div>
       <div class="social-row">
         <a href="#" target="_blank" rel="noopener">Bandcamp</a>
         <div class="dot"></div>
@@ -94,6 +116,79 @@
   <footer>
     <p>© 2026 Wolfthump &nbsp;·&nbsp; Chico, California &nbsp;·&nbsp; For the Love of the Groove</p>
   </footer>
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script>
+  // Booking form -> Cloudflare Worker (worker/contact.mjs). TECH_DESIGN.md "Booking form".
+  (function () {
+    var CONTACT_URL = 'https://wolfthump-contact.bparnell.workers.dev/';
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var form = document.getElementById('booking-form');
+    var errorBox = document.getElementById('bf-error');
+    var button = document.getElementById('bf-send');
+    var thanks = document.getElementById('bf-thanks');
+    var shownAt = Date.now();
+
+    function showError(text) {
+      errorBox.textContent = text;
+      errorBox.hidden = false;
+    }
+
+    function resetTurnstile() {
+      if (window.turnstile) window.turnstile.reset();
+    }
+
+    function finish() {
+      button.disabled = false;
+      button.textContent = 'Send message';
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errorBox.hidden = true;
+
+      var data = {
+        name: form.elements.namedItem('name').value.trim(),
+        email: form.elements.namedItem('email').value.trim(),
+        message: form.elements.namedItem('message').value.trim(),
+        website: form.elements.namedItem('website').value,
+        elapsed: Date.now() - shownAt,
+        turnstile: (form.querySelector('[name="cf-turnstile-response"]') || {}).value || ''
+      };
+      if (!data.name) return showError('Please tell us your name.');
+      if (!EMAIL_RE.test(data.email)) return showError('Please check your email address.');
+      if (!data.message) return showError('Please write a short message.');
+      if (!data.turnstile) return showError('Please wait a moment for the "I am human" check to finish, then try again.');
+
+      button.disabled = true;
+      button.textContent = 'Sending…';
+      fetch(CONTACT_URL, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; });
+        })
+        .then(function (out) {
+          if (out.ok) {
+            form.hidden = true;
+            thanks.hidden = false;
+            thanks.focus();
+          } else {
+            showError(out.error || 'Sorry, your message did not go through. Please try again in a few minutes.');
+            resetTurnstile();
+            finish();
+          }
+        })
+        .catch(function () {
+          showError('Sorry, your message did not go through. Please check your connection and try again.');
+          resetTurnstile();
+          finish();
+        });
+    });
+  })();
+  </script>
 
   <script>
     const observer = new IntersectionObserver((entries) => {
