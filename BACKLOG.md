@@ -58,5 +58,26 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 ---
 
 ## Log
+
+### Where we are (2026-10-25, end of session)
+- **State:** the live site is unchanged and still shows the old
+  `mailto:booking@wolfthump.com` card, which probably goes nowhere. The form
+  backend (`worker/`) is built, and its 14 tests pass. It isn't deployed and has
+  no accounts or secrets yet. Nothing is in flight.
+- **Waiting on Bill:**
+  - Push `main` when ready. It's safe: the Worker code being published by Pages
+    is harmless, and the page doesn't change until Phase 2.
+  - **Where is the page actually live?** The repo has no `CNAME` file, and the
+    page is `wolfthump_index.html`, not `index.html`. `ALLOWED_ORIGINS` in
+    `worker/wrangler.jsonc` is a guess
+    (`billparnell.github.io`, `wolfthump.com`, `www.wolfthump.com`). Confirm it
+    before Phase 3.
+  - **Thank-you copy:** Claude read "it might not always be Mike" as "don't
+    name Mike", so the copy is "Thanks! We'll be in touch soon." Confirm, or give
+    the exact wording.
+  - Sender domain choice (Phase 3), and Mike's eventual inbox (Later).
+- **Next task:** Phase 2, the form on the page. It needs no accounts, because it
+  uses Turnstile's test site key.
+
 - **2026-10-25:** Decided on a form instead of a published email (PRODUCT_BRIEF).
   Built and tested the Worker backend (Phase 1). Next: Phase 2.
