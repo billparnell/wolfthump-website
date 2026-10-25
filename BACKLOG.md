@@ -32,17 +32,17 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [x] Check at 375px in a browser; no console errors (only the missing favicon 404).
       Also fixed the hero widening the page to 448px.
 
-### Phase 3 — Accounts, secrets, deploy (Bill's hands, Claude gives the steps)
+### Phase 3 — Accounts, secrets, deploy — ✅ DONE 2026-10-25
 - [x] **Sender decided:** `Wolfthump <wolfthump@parnellprojects.com>`, so no
       DNS work. `MAIL_TO` is Bill's Gmail for now.
-- [ ] Cloudflare → Turnstile → add a widget for the page's hostnames → copy the
+- [x] Cloudflare → Turnstile → add a widget for the page's hostnames → copy the
       site key (goes in the HTML) and the secret key (goes into a Worker secret).
-- [ ] Resend → new API key for this app only (PLAYBOOK §3: one key per app).
+- [x] Resend → new API key for this app only (PLAYBOOK §3: one key per app).
 - [x] `npx wrangler login`: already logged in from groove-bank (account bparnell@gmail.com).
 - [x] Deployed: `https://wolfthump-contact.bparnell.workers.dev`. It answers
       503 "not switched on yet" until all secrets are set (checked with curl).
 - [x] `MAIL_FROM` secret set.
-- [ ] Bill, in his own Terminal: `npx wrangler secret put <NAME> -c worker/wrangler.jsonc`
+- [x] Bill, in his own Terminal: `npx wrangler secret put <NAME> -c worker/wrangler.jsonc`
       for TURNSTILE_SECRET, RESEND_API_KEY, MAIL_TO (his Gmail for now).
 - [x] Real Turnstile site key `0x4AAAAAAFlmLSyv_cTDlIYJ` is in the page (widget
       "Wolfthump booking", hostname `billparnell.github.io`). `CONTACT_URL` matches
@@ -52,7 +52,10 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 ### Phase 4 — End-to-end and review
 - [ ] Real submission from the live page on a phone: inquiry arrives, Reply-To
       works, confirmation arrives and doesn't land in spam.
-- [ ] `curl` without Turnstile → rejected; with a foreign Origin → 403.
+- [x] Live curls, 2026-10-25: all four secrets listed. A fake or missing
+      Turnstile token gets 400, a foreign or missing Origin 403, honeypot a fake
+      200, GET 405, and preflight 204 with the right CORS origin. The rate limit
+      does engage (429s in a 15-request burst) but only loosely; see TECH_DESIGN.
 - [ ] **`/security-review` before announcing the form.**
 
 ### Later
@@ -88,6 +91,9 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - **Next task:** Phase 2, the form on the page. It needs no accounts, because it
   uses Turnstile's test site key.
 
+- **2026-10-25 (evening):** Worker deployed with all secrets, real Turnstile key in
+  the page, and live curls green. Waiting on: Bill runs `/security-review`, pushes, then
+  sends one real message from his phone (Phase 4, first item).
 - **2026-10-25 (later):** Bateria replaces Batucada (Mike). Phase 2 done; the
   form was checked end to end at 375px against the real Worker locally.
 - **2026-10-25:** Decided on a form instead of a published email (PRODUCT_BRIEF).

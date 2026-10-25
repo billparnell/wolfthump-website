@@ -23,7 +23,7 @@ in order:
 |---|---|---|
 | Config present | safe before secrets are set | 503 "not switched on yet" |
 | `Origin` in `ALLOWED_ORIGINS` | stops other sites posting through it, and is the CORS allow-list | 403 |
-| Rate limit (`LIMITER`, 3/min per IP) | caps anyone who gets past Turnstile | 429 |
+| Rate limit (`LIMITER`, 3/min per IP) | caps anyone who gets past Turnstile. **Loose by design:** Cloudflare's limiter counts per data center and is eventually consistent, so a live burst got 4 of 15 refused, not 12. It's a backstop, not the gate. | 429 |
 | Body ≤ 20 KB, valid JSON | cheap junk filter | 413 / 400 |
 | Honeypot `website` empty | bots fill every field | **fake 200, nothing sent** |
 | `elapsed` ≥ 3 s since the form appeared | scripts submit instantly | **fake 200, nothing sent** |
