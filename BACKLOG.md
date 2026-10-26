@@ -69,7 +69,7 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [ ] Before each push: offer `/code-review`.
 - [x] Post-push checks: docs and `worker/` 404 on the live site; redirect and
       favicon 200.
-- [ ] **wolfthump.com go-live** (in progress 2026-10-25):
+- [x] **wolfthump.com go-live** — ✅ DONE 2026-10-25:
   - [x] Bill has a NameSilo sub-user on Mike's account.
   - [x] NameSilo DNS: parking records deleted; four GitHub A records on `@`,
         `www` CNAME → `billparnell.github.io` (see TECH_DESIGN "Domain").
@@ -77,23 +77,41 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
   - [x] Turnstile hostname `wolfthump.com` added; Bill's form test passed.
   - [x] Certificate issued (Let's Encrypt, 2026-10-25). `https://wolfthump.com`,
         `www.` and the old github.io link all land on the site.
-  - [ ] **Bill: GitHub repo → Settings → Pages → tick Enforce HTTPS.** As of
-        2026-10-25 `http://wolfthump.com` still serves plain http, and the old
-        github.io link forwards to `http://`. Then Claude rechecks with curl.
+  - [x] Enforce HTTPS ticked. Curl-checked: `http://`, `www.` and the old
+        github.io link all land on `https://wolfthump.com/`.
 - [x] **booking@wolfthump.com** forwards to Bill's Gmail (NameSilo, free).
       `MAIL_TO` = Bill's Gmail + booking@, `MAIL_REPLY_TO` = booking@. See
       TECH_DESIGN "booking@wolfthump.com".
 - [x] **booking@ handed to Mike** (2026-10-25): NameSilo forward `booking` →
       Mike's personal email. `MAIL_TO` = `booking@wolfthump.com, Bill's Gmail`,
       so each inquiry reaches Mike (via forward) and Bill (direct).
+- [x] Test from a third address to booking@ reached Mike (2026-10-25).
 - [ ] Mike: never-spam rule in his mail app for mail To `booking@wolfthump.com`
-      (forwarded mail tends to land in spam). Then one test from a third address.
+      (forwarded mail tended to land in Bill's spam). Not confirmed he's added it.
+- [ ] Bill's open question from the first phone test: "right-justified" form?
+      Never clarified after the restyle; ask before changing anything.
+- [ ] Optional: send from `@wolfthump.com` instead of `parnellprojects.com`
+      (verify the domain in Resend, add its records at NameSilo, change
+      `MAIL_FROM`). Uses a Resend domain slot; Bill thinks 2 of 3 are used.
 - [x] Facebook link is live (`facebook.com/wolfthumpmusic`). Bandcamp and Instagram are
       commented out in `index.html` until the band has them.
 
 ---
 
 ## Log
+
+### Where we are (2026-10-25, end of day — supersedes the older note below)
+- **State:** live at **https://wolfthump.com** (GitHub Pages, HTTPS enforced).
+  The booking form works on it. Inquiries go to `booking@wolfthump.com` (NameSilo
+  forward → Mike's personal email) and Bill's Gmail; replies to the confirmation
+  go to booking@. Tests 15/15. Everything is pushed; nothing in flight.
+- **Waiting on Bill/Mike:** Mike adds a never-spam rule for booking@ mail.
+- **Next task:** nothing urgent. Pick from "Later": Bandcamp/Instagram links when
+  the band has them, or the optional `@wolfthump.com` sender.
+- **Where things live:** DNS + email forwarding at NameSilo (Bill's sub-user on
+  Mike's account); Worker, Turnstile and secrets in Bill's Cloudflare; Resend key
+  in Bill's Resend. Secret values: MAIL_TO = booking@ + Bill's Gmail,
+  MAIL_REPLY_TO = booking@.
 
 - **2026-10-25 (late afternoon):** wolfthump.com is live on GitHub Pages with a
   certificate. booking@wolfthump.com forwards to Bill's Gmail via NameSilo;
@@ -102,14 +120,15 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
   to Mike.
 - **2026-10-25 (evening):** booking@ now forwards to Mike; `MAIL_TO` is booking@ +
   Bill's Gmail. Bill ticked Enforce HTTPS; at last check `http://` hadn't started
-  redirecting yet (GitHub can lag). Open: confirm the redirect, Mike's spam rule.
+  redirecting yet (GitHub can lag); it was redirecting by the wrap. Mike's test to
+  booking@ came through.
 
 - **2026-10-25 (afternoon, with Mike):** Bill set up a NameSilo sub-user and
   pointed DNS at GitHub Pages. Main address decided: `https://wolfthump.com`.
   `CNAME` file committed. Waiting on Bill: Turnstile hostname, push, Enforce
   HTTPS. Then Claude runs the go-live checks above.
 
-### Where we are (2026-10-25, end of session)
+### Earlier note (2026-10-25, first session — stale)
 - **State:** the live site is unchanged and still shows the old
   `mailto:booking@wolfthump.com` card, which probably goes nowhere. The form
   backend (`worker/`) is built, and its 14 tests pass. It isn't deployed and has
