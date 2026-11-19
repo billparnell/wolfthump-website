@@ -15,11 +15,13 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
       11/13/26 clips (Maracatu, Goosebumps, …) are on the channel and in Featured.
       `https://www.youtube.com/feeds/videos.xml?channel_id=…` / `?playlist_id=…`
 
-### Phase V1 — Home page embed
-- [ ] Replace the self-hosted `<video>` in `index.html` with a responsive
-      `youtube-nocookie.com/embed/videoseries?list=<PL id>` iframe (it starts on
-      the playlist's first video). Keep the existing `.video-wrap` sizing.
-- [ ] Add a big "More videos" button linking to `videos.html`.
+### Phase V1 — Home page embed — ✅ DONE 2026-11-19
+- [x] `index.html`: the self-hosted `<video>` is now a
+      `youtube-nocookie.com/embed/videoseries?list=PLMbeFSuVov64` iframe, which
+      starts on the playlist's first video. The existing `.video-wrap iframe` CSS
+      sizes it, so no CSS change. Bill checked it locally and it looks good.
+- [x] "More videos" button **moved to V3**, so it never points at a page that
+      doesn't exist yet.
 - [ ] The Women's Club clips are on YouTube now, so ask Bill whether the
       self-hosted `video/` files can go. Don't delete them without asking.
 
@@ -35,6 +37,8 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [ ] Deploy by hand: `npx wrangler deploy -c worker/wrangler.jsonc`.
 
 ### Phase V3 — `videos.html`
+- [ ] "More videos" button under the home-page video, linking to `videos.html`
+      (moved from V1). Same look as `.form-button`, ≥56px tall.
 - [ ] New page, same header and footer, and tokens from `default.css` (bump `?v=`).
 - [ ] A grid of thumbnail cards (`i.ytimg.com/vi/<id>/hqdefault.jpg`), title,
       date, and "Posted by …" when the video isn't from our channel. Tap a card to
@@ -136,6 +140,9 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 ---
 
 ## Log
+
+- **2026-11-19:** Videos V0 + V1 done. The home page plays the first video in the
+  YouTube "Featured" playlist. Next: V2, the Worker `/videos` route.
 
 ### Where we are (2026-10-25, end of day — supersedes the older note below)
 - **State:** live at **https://wolfthump.com** (GitHub Pages, HTTPS enforced).

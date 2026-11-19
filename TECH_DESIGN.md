@@ -65,6 +65,15 @@ are the bullseye drum from the logo's centre, cropped to the rings, inverted to
 cream on `--deep-water`, and rendered with headless Chrome. The full crest is
 mush below 64px.
 
+## Videos
+
+**Home page (2026-11-19):** the `.video-wrap` holds a
+`youtube-nocookie.com/embed/videoseries?list=PLMbeFSuVov64` iframe. YouTube
+starts it on the first video in the channel's **Featured** playlist, so the
+home-page video changes when someone reorders the playlist in YouTube Studio,
+with no code change. Channel `@wolfthumpgrooves` = `UCvJxyIG6eTOkeZhJ7zi3brQ`.
+The self-hosted `video/womens_club_2025.mp4` is no longer used.
+
 ## Booking form
 
 **Flow:** the page POSTs JSON to the Worker, and the Worker runs these checks
