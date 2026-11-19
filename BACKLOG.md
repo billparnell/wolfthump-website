@@ -15,8 +15,14 @@ player stacked under the full-screen, fixed, live SVG noise filter.
 - [ ] **Not browser-checked by Claude** (Chrome extension not connected, local
       server blocked). Bill: check the grain still looks right, then scroll the
       home page and videos page on the iPhone a few times.
-- [ ] If it still crashes: click-to-load facade for the home video (costs a
-      second tap on iPhone), or drop the grain overlay entirely.
+- [x] Bill: still glitching with the tile. **Grain overlay disabled** (rule
+      commented out in `default.css`, `?v=9`). Hero tagline now says
+      "Modern-Day" (hyphen) so Bill can tell when the deploy is live; keep or
+      revert as he likes.
+- [ ] If it still glitches with the overlay off, next suspects in order: the
+      YouTube iframe (test by temporarily swapping in a click-to-load
+      thumbnail), the hero's infinite ripple animations, the logo's double
+      `drop-shadow` filter.
 
 ## Videos (decided 2026-11-19, see PRODUCT_BRIEF)
 

@@ -32,7 +32,9 @@ body {
 /* noise overlay: a pre-rendered tile (img/noise.png), not a live SVG
    feTurbulence filter. The filter, fixed over the whole screen, is the likely
    cause of iPhone Safari crashes alongside the YouTube player. Faintness is
-   baked into the tile's alpha. */
+   baked into the tile's alpha.
+   DISABLED 2026-11-19: the page still glitched on iPhone with the tile, so the
+   overlay is off while we find the cause. Remove these comment marks to restore.
 body::before {
   content: '';
   position: fixed;
@@ -42,6 +44,7 @@ body::before {
   pointer-events: none;
   z-index: 999;
 }
+*/
 
 /* ── HERO ── */
 .hero {
