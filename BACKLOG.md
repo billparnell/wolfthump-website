@@ -5,6 +5,19 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 
 ---
 
+## iPhone crash fix (2026-11-19) — needs Bill's phone test
+Bill saw scroll glitches and Safari's "A problem repeatedly occurred" page on
+the home page after the YouTube embed went in. That message is Safari killing
+the page, almost always memory/GPU. Not reproduced; best guess is the YouTube
+player stacked under the full-screen, fixed, live SVG noise filter.
+- [x] Grain overlay is now a pre-rendered tile `img/noise.png` (see TECH_DESIGN).
+- [x] Home-page YouTube iframe has `loading="lazy"`. CSS `?v=8`.
+- [ ] **Not browser-checked by Claude** (Chrome extension not connected, local
+      server blocked). Bill: check the grain still looks right, then scroll the
+      home page and videos page on the iPhone a few times.
+- [ ] If it still crashes: click-to-load facade for the home video (costs a
+      second tap on iPhone), or drop the grain overlay entirely.
+
 ## Videos (decided 2026-11-19, see PRODUCT_BRIEF)
 
 ### Phase V0 — Bill/Mike, on YouTube — ✅ DONE 2026-11-19

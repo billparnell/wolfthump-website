@@ -235,3 +235,11 @@ with Cinzel for headings and Crimson Pro for body text, 18px base.
 - **Headless check at 375px:** with the Chrome extension not connected, use
   `groove-bank/tools/cdp.js`. The Phase 2 script drove the real page and Worker
   with Turnstile's test keys and Resend stubbed out.
+
+**Grain overlay (2026-11-19):** `body::before` used to draw a live SVG
+`feTurbulence` filter, fixed over the whole screen at z-index 999. It's now a
+200×200 grey+alpha PNG tile, `img/noise.png` (63 KB), with the faintness baked
+into the alpha (0–5 of 255, about the old 0.05 × 0.35). Made once with a small
+seeded Node script, which isn't kept in the repo. Any grey noise tile with ~1%
+alpha would do. Reason: suspected iPhone Safari crashes once the YouTube player
+was added (see BACKLOG). The home-page iframe is also `loading="lazy"` now.

@@ -29,15 +29,18 @@ body {
   overflow-x: hidden;
 }
 
-/* noise overlay */
+/* noise overlay: a pre-rendered tile (img/noise.png), not a live SVG
+   feTurbulence filter. The filter, fixed over the whole screen, is the likely
+   cause of iPhone Safari crashes alongside the YouTube player. Faintness is
+   baked into the tile's alpha. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  background-image: url("../img/noise.png");
+  background-size: 200px 200px;
   pointer-events: none;
   z-index: 999;
-  opacity: 0.35;
 }
 
 /* ── HERO ── */
