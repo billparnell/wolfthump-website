@@ -97,6 +97,28 @@ booking checks, so the two don't share config requirements.
 - CORS: `access-control-allow-origin` only for `ALLOWED_ORIGINS`. Other callers
   (curl) still get the data, since it's public anyway. GET only.
 
+**`videos.html` (2026-11-19):** a second page, linked from the "More videos"
+button under the home-page video. Small logo (links home), "Watch Wolfthump",
+then one `.video-card` per video, built in vanilla JS from a `<template>`
+with `textContent` only (titles come from strangers' YouTube channels, so
+never `innerHTML`). Video ids are checked against `[\w-]{6,20}` again before
+they go into a URL.
+- Card: YouTube's `hqdefault.jpg` thumbnail (4:3 with black bars, so
+  `object-fit: cover` at 16:9) with a `.play-ring` over it, then title, date,
+  and "· Posted by {channel}" when `ours` is false.
+- Tap → the thumbnail swaps for a `youtube-nocookie` iframe (`autoplay=1`;
+  iOS may still want a second tap). Starting another video puts the previous
+  card back to its thumbnail, so only one plays at a time.
+- Load failure or an empty list → "Sorry, the videos didn't load…" and the
+  "See us on YouTube" button (always on the page) is the way out.
+- `VIDEOS_URL` is the Worker on the real site. On `localhost`/`127.0.0.1` it's
+  same-origin `/videos`, because the Worker only gives CORS to the real site; a
+  local preview server answers `/videos` by running `worker/contact.mjs`.
+- No water canvas on this page; it's an inline script on the home page only.
+- **Grid gotcha:** `.video-list` columns are `minmax(0, 1fr)`, not `1fr`.
+  Plain `1fr` won't shrink below the thumbnail's 480px intrinsic width, and the
+  page was ~500px wide on a phone until that was fixed.
+
 ## Booking form
 
 **Flow:** the page POSTs JSON to the Worker, and the Worker runs these checks
@@ -154,6 +176,17 @@ entities, merge/de-dupe/sort, CORS, one feed down, hourly memo, stale-on-outage,
 ## Visual system
 Tokens are on `:root` in `css/default.css` (deep-water / teal / cream / gold),
 with Cinzel for headings and Crimson Pro for body text, 18px base.
+
+- **One card family:** `.booking-card` and `.video-card` share the same border and
+  background rule. Video cards drop the padding so the thumbnail runs edge to edge.
+- **One button:** `.form-button`. On an `<a>` (`a.form-button`) it centers its
+  label with flex: "More videos" and "See us on YouTube".
+- **Checking 375px without the Chrome extension:** headless Chrome on macOS won't
+  open a window narrower than about 500px, so `--window-size=375,…` screenshots
+  are wrong (they crop a wider layout). Use the DevTools protocol's
+  `Emulation.setDeviceMetricsOverride` (375×812, mobile) instead. Headless also
+  draws the logo's `mix-blend-mode: screen` as a faint box, on both pages; real
+  browsers don't.
 
 - **`.booking-card`** is the one card in the booking area. The form and the
   thank-you are both one. Field labels and inputs are 1.15rem (18.4px), and

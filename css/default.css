@@ -195,6 +195,9 @@ section { position: relative; padding: 90px 20px; }
   border: none;
 }
 
+/* "More videos" under the home-page video. */
+.more-videos { max-width: 420px; margin: 0 auto; padding: 28px 0 0; }
+
 /* ── ABOUT ── */
 .about-section {
   background: linear-gradient(180deg, #0d1f2d 0%, #0f2530 50%, #0d1f2d 100%);
@@ -306,8 +309,9 @@ section { position: relative; padding: 90px 20px; }
   font-weight: 300;
   margin-bottom: 48px;
 }
-/* One card family for the booking area: the form and the thank-you share it. */
-.booking-card {
+/* The one card family: the booking form, the thank-you, and the video cards. */
+.booking-card,
+.video-card {
   display: block;
   padding: 36px 32px;
   border: 1px solid rgba(46,125,156,0.28);
@@ -377,6 +381,11 @@ section { position: relative; padding: 90px 20px; }
   cursor: pointer;
   transition: background 0.25s ease;
 }
+a.form-button {
+  display: flex; align-items: center; justify-content: center;
+  padding: 10px 20px;
+  text-align: center; text-decoration: none; line-height: 1.3;
+}
 .form-button:hover { background: var(--mid-teal); }
 .form-button:focus-visible { outline: 2px solid var(--pale-water); outline-offset: 2px; }
 .form-button:disabled { opacity: 0.6; cursor: wait; }
@@ -401,6 +410,97 @@ section { position: relative; padding: 90px 20px; }
 .social-row .dot {
   width: 3px; height: 3px; border-radius: 50%;
   background: rgba(122,184,200,0.25);
+}
+
+/* ── VIDEOS PAGE (videos.html) ── */
+.page-header {
+  padding: 24px 20px 0;
+  background: #091820;
+  text-align: center;
+}
+.page-header-logo {
+  display: inline-block;
+  width: min(220px, 60vw);
+  padding: 8px;  /* bigger tap target around the logo */
+}
+.page-header-logo img {
+  width: 100%; display: block;
+  filter: invert(1) drop-shadow(0 0 20px rgba(122,184,200,0.3));
+  mix-blend-mode: screen;
+}
+.videos-section {
+  padding-top: 40px;
+  background: linear-gradient(180deg, #091820 0%, #0d1f2d 100%);
+}
+.videos-section h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.7rem, 3.8vw, 2.5rem);
+  font-weight: 400;
+  color: var(--warm-white);
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+.videos-intro,
+.videos-status {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  margin-bottom: 32px;
+}
+.video-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);  /* minmax: let cards shrink below the 480px thumbnail */
+  gap: 28px;
+  margin-bottom: 44px;
+}
+@media (min-width: 700px) {
+  .video-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.video-card { padding: 0; overflow: hidden; }
+.video-thumb,
+.video-frame {
+  display: block; position: relative;
+  width: 100%; aspect-ratio: 16/9;
+  background: #060f16;
+}
+.video-thumb {
+  border: none; padding: 0; cursor: pointer;
+}
+.video-thumb img {
+  width: 100%; height: 100%; display: block;
+  object-fit: cover;  /* YouTube's 4:3 thumbnails carry black bars; crop them */
+  filter: saturate(0.85) brightness(0.85);
+  transition: filter 0.3s ease;
+}
+.video-thumb:hover img { filter: saturate(1) brightness(1); }
+.video-thumb:focus-visible { outline: 2px solid var(--pale-water); outline-offset: 2px; }
+.video-thumb .play-ring {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(6,15,22,0.6);
+  border-color: rgba(232,220,200,0.7);
+}
+.video-thumb .play-ring::after { border-color: transparent transparent transparent var(--warm-white); }
+.video-frame iframe {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; border: none;
+}
+.video-card-body { padding: 16px 18px 20px; }
+.video-title {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 1.3rem; font-weight: 400; line-height: 1.35;
+  color: var(--warm-white);
+}
+.video-meta {
+  margin-top: 6px;
+  font-size: 1.15rem;
+  color: var(--text-muted);
+}
+.youtube-button { max-width: 420px; margin: 0 auto; }
+.back-link {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 56px; margin-top: 16px;
+  font-size: 1.15rem;
+  color: var(--pale-water);
 }
 
 /* ── FOOTER ── */

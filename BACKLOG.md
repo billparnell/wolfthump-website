@@ -25,30 +25,35 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [ ] The Women's Club clips are on YouTube now, so ask Bill whether the
       self-hosted `video/` files can go. Don't delete them without asking.
 
-### Phase V2 — Worker `/videos` route — built 2026-11-19, ⏳ deploy pending
+### Phase V2 — Worker `/videos` route — ✅ DONE 2026-11-19
 - [x] `worker/videos.mjs` + a `/videos` route in `contact.mjs`: fetch both feeds,
       parse, merge, de-dupe, newest first, JSON. CORS for the site origins only.
       Caching is in memory, because the Cache API is a no-op on workers.dev. See TECH_DESIGN.
 - [x] `YT_CHANNEL_ID`, `YT_PLAYLIST_ID` in `wrangler.jsonc` vars.
 - [x] 9 tests added to `worker/contact.test.mjs` (24 total, all passing). Also
       ran against the live YouTube feeds: 3 videos, right order and headers.
-- [ ] **Bill deploys** (in his Terminal, repo folder):
+- [x] **Bill deployed** 2026-11-19 and the curl check returned the list. (In his Terminal, repo folder:
       `npx wrangler deploy -c worker/wrangler.jsonc`, then check
       `curl -s -H 'Origin: https://wolfthump.com' https://wolfthump-contact.bparnell.workers.dev/videos`
       returns `{"ok":true,"videos":[…]}`. This redeploys the booking form too,
-      so send one test inquiry from the live site afterwards.
+      so send one test inquiry from the live site afterwards.)
+- [ ] Bill: send one test booking inquiry from wolfthump.com to confirm the
+      redeploy didn't break the form.
 
-### Phase V3 — `videos.html`
-- [ ] "More videos" button under the home-page video, linking to `videos.html`
-      (moved from V1). Same look as `.form-button`, ≥56px tall.
-- [ ] Page fetches `https://wolfthump-contact.bparnell.workers.dev/videos`
-      (a constant at the top of its script, like `CONTACT_URL`).
-- [ ] New page, same header and footer, and tokens from `default.css` (bump `?v=`).
-- [ ] A grid of thumbnail cards (`i.ytimg.com/vi/<id>/hqdefault.jpg`), title,
-      date, and "Posted by …" when the video isn't from our channel. Tap a card to
-      play it in place (the iframe loads only after the tap). Tap targets ≥56px.
-- [ ] Friendly fallback if the Worker fails: a link to the YouTube channel.
-- [ ] Check at 375px, read the console, update TECH_DESIGN.
+### Phase V3 — `videos.html` — ✅ DONE 2026-11-19 (not pushed)
+- [x] "More videos" button under the home-page video → `videos.html`.
+- [x] `videos.html`: logo home link, cards (thumbnail + play ring, title, date,
+      "Posted by …" for other channels), tap to play in place, one at a time.
+      Fetches the Worker's `/videos`; same-origin `/videos` on localhost.
+- [x] Error state: plain apology + "See us on YouTube" button.
+- [x] `default.css` styles; `?v=4` on both pages. TECH_DESIGN updated.
+- [x] Checked at 375×812 (DevTools emulation, live YouTube data): no sideways
+      scroll (fixed a 500px-wide grid), 3 cards, tap swaps in the player and
+      restores the previous one, error state. Console clean apart from the
+      Turnstile 110200 that every local preview gets (wrong hostname).
+- [ ] Bill: push, then check wolfthump.com/videos.html on the iPhone, including
+      that a video plays.
+- [ ] Ask Bill whether the self-hosted `video/` files can be deleted (see V1).
 
 ## Booking form
 
@@ -144,6 +149,10 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 ---
 
 ## Log
+
+- **2026-11-19:** Videos V3 done: `videos.html` and the "More videos" button. The
+  whole videos feature is built; it's live once Bill pushes. Open items: phone
+  check, test booking inquiry after the Worker redeploy, the old `video/` files.
 
 - **2026-11-19:** Videos V2 built and committed: Worker `GET /videos`. Not
   deployed yet (Bill runs the deploy). Next: V3, `videos.html`.

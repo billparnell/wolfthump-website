@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Videos — Wolfthump</title>
+  <meta name="description" content="Videos of Wolfthump, Chico's Afro-Brazilian drum-funk drumline.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/default.css?v=4">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+</head>
+<body>
+
+  <header class="page-header">
+    <a class="page-header-logo" href="./" aria-label="Wolfthump home page">
+      <img src="img/wolfthump_logo.png" alt="">
+    </a>
+  </header>
+
+  <section class="videos-section">
+    <div class="container">
+      <div class="section-label">Videos</div>
+      <h1>Watch Wolfthump</h1>
+      <p class="videos-intro">Tap a video to play it.</p>
+
+      <p class="videos-status" id="videos-status" role="status">Loading videos…</p>
+      <div class="video-list" id="video-list"></div>
+
+      <a class="form-button youtube-button" href="https://www.youtube.com/@wolfthumpgrooves" target="_blank" rel="noopener">See us on YouTube</a>
+      <a class="back-link" href="./">← Back to the home page</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Wolfthump &nbsp;·&nbsp; Chico, California &nbsp;·&nbsp; For the Love of the Groove</p>
+  </footer>
+
+  <template id="video-card-template">
+    <article class="video-card">
+      <button type="button" class="video-thumb">
+        <img alt="" loading="lazy" width="480" height="360">
+        <span class="play-ring" aria-hidden="true"></span>
+      </button>
+      <div class="video-card-body">
+        <h2 class="video-title"></h2>
+        <p class="video-meta"></p>
+      </div>
+    </article>
+  </template>
+
+  <script>
+  // Video list from the Worker's GET /videos (worker/videos.mjs): our channel's
+  // uploads plus the YouTube "Featured" playlist, newest first. TECH_DESIGN "Videos".
+  (function () {
+    // Locally the preview server answers /videos itself (the Worker only allows
+    // the real site's address), so the page can be checked before it's pushed.
+    var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+    var VIDEOS_URL = LOCAL ? '/videos' : 'https://wolfthump-contact.bparnell.workers.dev/videos';
+    var ID_RE = /^[\w-]{6,20}$/;
+    var list = document.getElementById('video-list');
+    var status = document.getElementById('videos-status');
+    var template = document.getElementById('video-card-template');
+    var playing = null;  // the card whose thumbnail is swapped for a player
+
+    function formatDate(iso) {
+      var d = new Date(iso);
+      if (isNaN(d)) return '';
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function stopPlaying() {
+      if (!playing) return;
+      playing.card.replaceChild(playing.thumb, playing.frame);
+      playing = null;
+    }
+
+    function play(card, thumb, video) {
+      stopPlaying();
+      var frame = document.createElement('div');
+      frame.className = 'video-frame';
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + video.id + '?autoplay=1&rel=0&playsinline=1';
+      iframe.title = video.title;
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allowFullscreen = true;
+      frame.appendChild(iframe);
+      card.replaceChild(frame, thumb);
+      playing = { card: card, thumb: thumb, frame: frame };
+    }
+
+    function render(videos) {
+      videos.forEach(function (video) {
+        if (!ID_RE.test(video.id)) return;
+        var card = template.content.firstElementChild.cloneNode(true);
+        var thumb = card.querySelector('.video-thumb');
+        thumb.setAttribute('aria-label', 'Play ' + video.title);
+        thumb.querySelector('img').src = 'https://i.ytimg.com/vi/' + video.id + '/hqdefault.jpg';
+        card.querySelector('.video-title').textContent = video.title;
+        var meta = formatDate(video.published);
+        if (!video.ours && video.channel) meta += (meta ? ' · ' : '') + 'Posted by ' + video.channel;
+        card.querySelector('.video-meta').textContent = meta;
+        thumb.addEventListener('click', function () { play(card, thumb, video); });
+        list.appendChild(card);
+      });
+    }
+
+    function fail() {
+      status.textContent = "Sorry, the videos didn't load. You can watch them all on our YouTube channel.";
+    }
+
+    fetch(VIDEOS_URL)
+      .then(function (res) { return res.json(); })
+      .then(function (out) {
+        if (!out.ok || !out.videos || !out.videos.length) return fail();
+        status.hidden = true;
+        render(out.videos);
+      })
+      .catch(fail);
+  })();
+  </script>
+
+</body>
+</html>
