@@ -63,12 +63,6 @@
     var template = document.getElementById('video-card-template');
     var playing = null;  // the card whose thumbnail is swapped for a player
 
-    function formatDate(iso) {
-      var d = new Date(iso);
-      if (isNaN(d)) return '';
-      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    }
-
     function stopPlaying() {
       if (!playing) return;
       playing.card.replaceChild(playing.thumb, playing.frame);
@@ -98,9 +92,11 @@
         thumb.setAttribute('aria-label', 'Play ' + video.title);
         thumb.querySelector('img').src = 'https://i.ytimg.com/vi/' + video.id + '/hqdefault.jpg';
         card.querySelector('.video-title').textContent = video.title;
-        var meta = formatDate(video.published);
-        if (!video.ours && video.channel) meta += (meta ? ' · ' : '') + 'Posted by ' + video.channel;
-        card.querySelector('.video-meta').textContent = meta;
+        // No upload date on purpose: it's when the clip went on YouTube, not
+        // when it was played, so it misleads. Only other channels get a line.
+        var meta = card.querySelector('.video-meta');
+        if (!video.ours && video.channel) meta.textContent = 'Posted by ' + video.channel;
+        else meta.hidden = true;
         thumb.addEventListener('click', function () { play(card, thumb, video); });
         list.appendChild(card);
       });

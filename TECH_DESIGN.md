@@ -111,8 +111,10 @@ with `textContent` only (titles come from strangers' YouTube channels, so
 never `innerHTML`). Video ids are checked against `[\w-]{6,20}` again before
 they go into a URL.
 - Card: YouTube's `hqdefault.jpg` thumbnail (4:3 with black bars, so
-  `object-fit: cover` at 16:9) with a `.play-ring` over it, then title, date,
-  and "· Posted by {channel}" when `ours` is false.
+  `object-fit: cover` at 16:9) with a `.play-ring` over it, then the title, and
+  "Posted by {channel}" when `ours` is false (that line is `hidden` otherwise).
+  No date: the Worker still sends `published`, but it's the upload date, not
+  the show date, so the page ignores it (PRODUCT_BRIEF).
 - Tap → the thumbnail swaps for a `youtube-nocookie` iframe (`autoplay=1`;
   iOS may still want a second tap). Starting another video puts the previous
   card back to its thumbnail, so only one plays at a time.

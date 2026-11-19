@@ -73,6 +73,9 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
       at /video/…) or add `video/` to `_config.yml` exclude. Don't delete unasked.
 
 ### Featured-only, in playlist order — 2026-11-19
+- [x] Cards no longer show the upload date (Bill: confusing; the show date is
+      in some titles). Only other channels' videos get a "Posted by" line.
+      Page-only change, no Worker deploy needed. Checked at 375px.
 - [x] Bill's call: the site shows **only** the Featured playlist, in its own
       order; channel uploads are no longer merged in (some shouldn't be on the
       site). `worker/videos.mjs` reads one feed; tests rewritten (26, all

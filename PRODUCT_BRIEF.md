@@ -44,6 +44,9 @@ The page's main job is to turn a visitor into a booking inquiry.
     playlist in YouTube Studio. Below it, a "More videos" link.
   - **`videos.html`:** the Featured playlist, **in the playlist's own order**.
     Videos from other channels show a small credit line ("Posted by …").
+    **No dates on the cards** (2026-11-19): YouTube's date is when a clip was
+    uploaded, not when it was played, which confused more than it helped. Put
+    the show date in the video's title instead, as the Women's Club clips do.
   - **Changed 2026-11-19 (same day):** channel uploads are *not* pulled in
     automatically any more. The first version merged them in, newest first.
     Bill: "we might have videos we don't want to show up on the website." So an
