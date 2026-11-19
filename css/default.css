@@ -14,8 +14,6 @@ html { background-color: #091820; }
   /* Added with videos.html (2026-11-19). Older rules still spell these out. */
   --night: #091820;                      /* darkest page band: hero top, page header */
   --night-deep: #060f16;                 /* behind video players and the footer */
-  --night-deep-60: rgba(6,15,22,0.6);    /* play-ring backing over thumbnails */
-  --cream-70: rgba(232,220,200,0.7);     /* play-ring outline over thumbnails */
   --pale-water-30: rgba(122,184,200,0.3);/* logo glow */
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -442,7 +440,7 @@ a.form-button {
 }
 .video-list {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);  /* minmax: let cards shrink below the 480px thumbnail */
+  grid-template-columns: minmax(0, 1fr);  /* minmax: let cards shrink below their content's natural width */
   gap: 28px;
   margin-bottom: 44px;
 }
@@ -450,30 +448,11 @@ a.form-button {
   .video-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .video-card { padding: 0; overflow: hidden; }
-.video-thumb,
 .video-frame {
   display: block; position: relative;
   width: 100%; aspect-ratio: 16/9;
   background: var(--night-deep);
 }
-.video-thumb {
-  border: none; padding: 0; cursor: pointer;
-}
-.video-thumb img {
-  width: 100%; height: 100%; display: block;
-  object-fit: cover;  /* YouTube's 4:3 thumbnails carry black bars; crop them */
-  filter: saturate(0.85) brightness(0.85);
-  transition: filter 0.3s ease;
-}
-.video-thumb:hover img { filter: saturate(1) brightness(1); }
-.video-thumb:focus-visible { outline: 2px solid var(--pale-water); outline-offset: 2px; }
-.video-thumb .play-ring {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--night-deep-60);
-  border-color: var(--cream-70);
-}
-.video-thumb .play-ring::after { border-color: transparent transparent transparent var(--warm-white); }
 .video-frame iframe {
   position: absolute; inset: 0;
   width: 100%; height: 100%; border: none;

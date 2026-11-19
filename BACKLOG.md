@@ -66,9 +66,12 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
       rule; `?v=5` on both pages. Rechecked at 375px, same look.
 - [x] 4 new tests, 28 total, all passing.
 - [x] ~~Bill: redeploy the Worker~~ (folded into "Featured-only" below).
-- [ ] iPhone check: does one tap on a thumbnail start the video? (The "Tap a
-      video to play it." line is gone now, so a second tap is less confusing,
-      but YouTube's player API could still make it one tap.)
+- [x] iPhone check found it took **two taps**. Fixed 2026-11-19: each card is
+      now YouTube's own player (one tap, like the home page), our full title
+      under it, and starting one pauses the others. `?v=7`.
+- [ ] **Bill: after pushing, confirm on the iPhone that one tap plays with sound**
+      and that starting a second video pauses the first. (Headless Chrome isn't
+      Safari, so this is the one thing only the phone can confirm.)
 - [ ] Bill to decide: delete `video/` (old home-page mp4 + poster, still public
       at /video/…) or add `video/` to `_config.yml` exclude. Don't delete unasked.
 
@@ -182,6 +185,10 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 ---
 
 ## Log
+
+- **2026-11-19:** Video cards are YouTube's own players now (iPhone needed
+  two taps with our thumbnails). Page-only; push is enough. Bill confirms one
+  tap on the phone.
 
 - **2026-11-19:** Videos page now shows only the Featured playlist, in
   playlist order. Waiting on Bill: Worker redeploy, push, iPhone check, `<h1>`

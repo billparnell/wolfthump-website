@@ -110,14 +110,25 @@ then one `.video-card` per video, built in vanilla JS from a `<template>`
 with `textContent` only (titles come from strangers' YouTube channels, so
 never `innerHTML`). Video ids are checked against `[\w-]{6,20}` again before
 they go into a URL.
-- Card: YouTube's `hqdefault.jpg` thumbnail (4:3 with black bars, so
-  `object-fit: cover` at 16:9) with a `.play-ring` over it, then the title, and
-  "Posted by {channel}" when `ours` is false (that line is `hidden` otherwise).
-  No date: the Worker still sends `published`, but it's the upload date, not
-  the show date, so the page ignores it (PRODUCT_BRIEF).
-- Tap → the thumbnail swaps for a `youtube-nocookie` iframe (`autoplay=1`;
-  iOS may still want a second tap). Starting another video puts the previous
-  card back to its thumbnail, so only one plays at a time.
+- **Card (reworked 2026-11-19):** YouTube's own player (a `youtube-nocookie`
+  iframe, `loading="lazy"`, `enablejsapi=1`), then our full title, then
+  "Posted by {channel}" when `ours` is false (`hidden` otherwise). No date: the
+  Worker still sends `published`, but it's the upload date, not the show date.
+  - **Why the real player, not a thumbnail:** the first version showed our own
+    thumbnail and swapped in the player on a tap. On Bill's iPhone that needed
+    **two taps**: iOS only plays sound when the tap lands on the player
+    itself. Muted autoplay was rejected (a silent video looks broken to this
+    audience). The home-page embed always worked in one tap for the same reason.
+  - **Why our title stays:** at phone width YouTube's overlay title is cut off at
+    "Wolfthump - Women's Club Chic…", before the song name that tells the videos apart.
+  - **One at a time:** `https://www.youtube.com/iframe_api` is loaded and each
+    iframe is wrapped in `YT.Player`; when one reports PLAYING, the others that
+    are playing get `pauseVideo()`. If that script fails, the players still
+    work; two could just play at once. Checked in headless Chrome (muted):
+    states went [1,5,5] → [2,1,5]. YouTube's widget script logs harmless
+    "Failed to execute 'postMessage'" warnings before each player loads.
+  - Lazy players load as you scroll near them; a full-page screenshot that
+    doesn't scroll shows the lower ones as dark boxes. That's expected.
 - Load failure or an empty list → "Sorry, the videos didn't load…" and the
   "See us on YouTube" button (always on the page) is the way out.
 - `VIDEOS_URL` is the Worker on the real site. On `localhost`/`127.0.0.1` it's
@@ -125,8 +136,9 @@ they go into a URL.
   local preview server answers `/videos` by running `worker/contact.mjs`.
 - No water canvas on this page; it's an inline script on the home page only.
 - **Grid gotcha:** `.video-list` columns are `minmax(0, 1fr)`, not `1fr`.
-  Plain `1fr` won't shrink below the thumbnail's 480px intrinsic width, and the
-  page was ~500px wide on a phone until that was fixed.
+  Plain `1fr` wouldn't shrink below the old thumbnail's 480px intrinsic width,
+  and the page was ~500px wide on a phone until that was fixed. Kept for the
+  players too.
 
 ## Booking form
 
@@ -190,7 +202,7 @@ with Cinzel for headings and Crimson Pro for body text, 18px base.
 - **One card family:** `.booking-card` and `.video-card` share the same border and
   background rule. Video cards drop the padding so the thumbnail runs edge to edge.
 - **Colors added with videos.html are tokens:** `--night`, `--night-deep`,
-  `--night-deep-60`, `--cream-70`, `--pale-water-30`. Older rules still have the
+  `--pale-water-30` (the play-ring tokens went with the custom thumbnails). Older rules still have the
   same values spelled out; switch them over when touching those rules.
 - **One button:** `.form-button`. On an `<a>` (`a.form-button`) it centers its
   label with flex: "More videos" and "See us on YouTube".
