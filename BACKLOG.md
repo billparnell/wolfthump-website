@@ -65,13 +65,25 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [x] New CSS colors are `:root` tokens; dropped the dead `.video-wrap video`
       rule; `?v=5` on both pages. Rechecked at 375px, same look.
 - [x] 4 new tests, 28 total, all passing.
-- [ ] **Bill: redeploy the Worker** (`npx wrangler deploy -c worker/wrangler.jsonc`),
-      rerun the `/videos` curl, then push.
-- [ ] iPhone check: does one tap on a thumbnail start the video? If it needs a
-      second tap, change "Tap a video to play it." or start it with YouTube's
-      player API.
+- [x] ~~Bill: redeploy the Worker~~ (folded into "Featured-only" below).
+- [ ] iPhone check: does one tap on a thumbnail start the video? (The "Tap a
+      video to play it." line is gone now, so a second tap is less confusing,
+      but YouTube's player API could still make it one tap.)
 - [ ] Bill to decide: delete `video/` (old home-page mp4 + poster, still public
       at /video/…) or add `video/` to `_config.yml` exclude. Don't delete unasked.
+
+### Featured-only, in playlist order — 2026-11-19
+- [x] Bill's call: the site shows **only** the Featured playlist, in its own
+      order; channel uploads are no longer merged in (some shouldn't be on the
+      site). `worker/videos.mjs` reads one feed; tests rewritten (26, all
+      passing); live run gives the real playlist order.
+- [x] Bill's own commit `1a80cd0` removed the "Watch Wolfthump" heading and
+      the "Tap a video to play it." line from `videos.html`.
+- [ ] **Bill: redeploy the Worker** (`npx wrangler deploy -c worker/wrangler.jsonc`),
+      rerun the `/videos` curl (expect Maracatu, Goosebumps, Samba Duro), then push.
+      This replaces the redeploy step under "Review fixes".
+- [ ] Ask Bill: the page has no `<h1>` since `1a80cd0`. Make the "Videos" label
+      the `<h1>` (same look)? Then drop the unused `.videos-intro` CSS.
 
 ## Booking form
 
@@ -167,6 +179,10 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 ---
 
 ## Log
+
+- **2026-11-19:** Videos page now shows only the Featured playlist, in
+  playlist order. Waiting on Bill: Worker redeploy, push, iPhone check, `<h1>`
+  question, the `video/` decision.
 
 - **2026-11-19:** Both reviews run. Security: clean. Code-review fixes done
   and committed (see "Review fixes"). Waiting on Bill: Worker redeploy, push,

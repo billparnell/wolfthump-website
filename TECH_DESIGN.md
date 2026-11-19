@@ -77,26 +77,26 @@ The self-hosted `video/womens_club_2025.mp4` is no longer used.
 **`GET /videos` on the Worker (2026-11-19)** feeds `videos.html`. It lives in
 `worker/videos.mjs`; `contact.mjs` routes the `/videos` path there before any
 booking checks, so the two don't share config requirements.
-- Reads YouTube's public feeds, with **no API key**:
-  `youtube.com/feeds/videos.xml?channel_id=YT_CHANNEL_ID` and
-  `?playlist_id=YT_PLAYLIST_ID` (plain vars in `wrangler.jsonc`; public IDs).
-  Each feed holds only its **latest 15** entries.
+- Reads **one** public YouTube feed, with **no API key**:
+  `youtube.com/feeds/videos.xml?playlist_id=YT_PLAYLIST_ID` (the Featured
+  playlist). `YT_CHANNEL_ID` is only used to tell our videos from other
+  channels'. Both are plain vars in `wrangler.jsonc`; public IDs. The feed holds
+  the playlist's **first 15** videos, **in playlist order** (checked against the
+  playlist page 2026-11-19: Maracatu, Goosebumps, Samba Duro, which isn't date
+  order). Until the same day it also merged the channel's uploads, newest
+  first; dropped so unlisted uploads stay off the site (PRODUCT_BRIEF).
 - Parses `<entry>` blocks with regexes (Workers have no DOMParser) and decodes
   XML entities. An entry whose video id isn't `[\w-]{6,20}` is dropped, because
   the id goes into URLs on the page.
-- Merges the feeds, de-dupes by video id, sorts by `published` (the video's own
-  upload date, in both feeds), newest first. Returns
+- Keeps the feed's order and drops a repeat of a video already listed. Returns
   `{ ok, videos: [{ id, title, published, channel, ours }] }`; `ours` is false
   for videos from other channels, so the page can add "Posted by {channel}".
-- **Caching (reworked after /code-review, 2026-11-19):** the Cache API is a
-  no-op on `workers.dev`, so each isolate keeps **each feed's last good list**
-  in memory. After a clean fetch of both feeds it reuses them for an hour.
-  If either feed fails, the one that loaded is updated, the failed one keeps its
-  last good list, and YouTube isn't asked again for **5 minutes**, not on every
-  visit. So a playlist that goes private for good never freezes new channel
-  uploads. No list ever loaded → 502 (for up to 5 minutes, then a retry).
-  Browsers may reuse a 200 for 10 minutes (`max-age=600`). A new upload shows up
-  within about an hour.
+- **Caching:** the Cache API is a no-op on `workers.dev`, so each isolate keeps
+  the last good list in memory and reuses it for an hour. If a fetch fails it
+  serves that last list, and YouTube isn't asked again for **5 minutes**, not
+  on every visit. No list ever loaded → 502 (for up to 5 minutes, then a
+  retry). Browsers may reuse a 200 for 10 minutes (`max-age=600`). So a
+  playlist change shows up within about an hour.
 - Numeric character codes outside Unicode (`&#9999999;`) are left as text,
   because `String.fromCodePoint` would throw and drop the whole feed.
 - The route matches `/videos` and `/videos/`.
@@ -104,7 +104,7 @@ booking checks, so the two don't share config requirements.
   (curl) still get the data, since it's public anyway. GET only.
 
 **`videos.html` (2026-11-19):** a second page, linked from the "More videos"
-button under the home-page video. Small logo (links home), "Watch Wolfthump",
+button under the home-page video. Small logo (links home), the "Videos" label,
 then one `.video-card` per video, built in vanilla JS from a `<template>`
 with `textContent` only (titles come from strangers' YouTube channels, so
 never `innerHTML`). Video ids are checked against `[\w-]{6,20}` again before
@@ -176,9 +176,9 @@ Turnstile, because each token works only once.
 ## Tests
 `node --test worker/contact.test.mjs`. It needs no dependencies, mocks `fetch`,
 and covers every row of the booking table above plus `/videos` (parsing,
-entities, merge/de-dupe/sort, CORS, one feed down, a feed down for good,
-hourly reuse, 5-minute retry wait, stale-on-outage, bad character codes,
-trailing slash, 502, 503, 405). The `videos … feed 500` lines in the output are expected logs.
+entities, playlist order kept, repeats dropped, reordering, CORS, hourly
+reuse, 5-minute retry wait, stale-on-outage, bad character codes, trailing
+slash, 502, 503, 405). The `videos … feed 500` lines in the output are expected logs.
 
 ## Visual system
 Tokens are on `:root` in `css/default.css` (deep-water / teal / cream / gold),

@@ -12,8 +12,8 @@
     // Every origin the page is served from. Update when wolfthump.com points
     // at the site.
     "ALLOWED_ORIGINS": "https://billparnell.github.io,https://wolfthump.com,https://www.wolfthump.com",
-    // GET /videos reads these two public YouTube feeds (videos.mjs). They are
-    // public IDs, not secrets: channel @wolfthumpgrooves and its "Featured" playlist.
+    // GET /videos (videos.mjs) reads the "Featured" playlist's feed; the channel
+    // ID (@wolfthumpgrooves) only marks which videos are ours. Public, not secrets.
     "YT_CHANNEL_ID": "UCvJxyIG6eTOkeZhJ7zi3brQ",
     "YT_PLAYLIST_ID": "PLMbeFSuVov64"
   },

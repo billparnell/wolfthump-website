@@ -35,18 +35,23 @@ The page's main job is to turn a visitor into a booking inquiry.
   the confirmation email, and the band can give it out by hand.
 
 - **2026-11-19: Videos come from YouTube and nobody edits code to add one.**
-  - Two sources: the band's **channel uploads** (automatic) and one
-    **"Featured" playlist** on the channel. Whoever manages the channel adds
-    *any* public YouTube video to it (fan clips, venue clips) with Save → Featured
-    in the YouTube app. Non-YouTube links (Facebook, Instagram) are out of scope.
+  - One source: the **"Featured" playlist** on the channel. Whoever manages the
+    channel adds *any* public YouTube video to it (their own uploads, fan clips,
+    venue clips) with Save → Featured in the YouTube app. Non-YouTube links
+    (Facebook, Instagram) are out of scope.
   - **Home page:** keeps a single video, which is **the first video in the
     Featured playlist**. To change it, drag another video to the top of the
     playlist in YouTube Studio. Below it, a "More videos" link.
-  - **`videos.html`:** channel uploads + Featured playlist in **one list, newest
-    first**, duplicates removed. Videos from other channels show a small credit
-    line ("Posted by …").
-  - Limits we accept: YouTube's feeds show the latest 15 per source, and a new
-    upload can take up to an hour to appear.
+  - **`videos.html`:** the Featured playlist, **in the playlist's own order**.
+    Videos from other channels show a small credit line ("Posted by …").
+  - **Changed 2026-11-19 (same day):** channel uploads are *not* pulled in
+    automatically any more. The first version merged them in, newest first.
+    Bill: "we might have videos we don't want to show up on the website." So an
+    upload reaches the site only when it's added to Featured, and the
+    playlist's drag order is the page's order. (YouTube Studio can add a video
+    to a playlist during upload.)
+  - Limits we accept: only the playlist's first 15 videos come through, and a
+    change can take up to an hour to show.
 
 ## Out of scope (for now)
 - Calendars, pricing, availability, payments.

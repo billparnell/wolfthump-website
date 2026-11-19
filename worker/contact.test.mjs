@@ -136,7 +136,7 @@ test('validate trims, flattens the name, and checks each field', () => {
 });
 
 // ── GET /videos (videos.mjs) ──
-import { parseFeed, mergeVideos, _resetMemo } from './videos.mjs';
+import { parseFeed, toVideos, handleVideos, _resetMemo } from './videos.mjs';
 
 const US = 'UCvJxyIG6eTOkeZhJ7zi3brQ';
 const VENV = { ALLOWED_ORIGINS: ORIGIN, YT_CHANNEL_ID: US, YT_PLAYLIST_ID: 'PLtest' };
@@ -150,26 +150,25 @@ const entry = (id, title, published, channelId = US, name = 'Wolfthump') => `
   <published>${published}</published>
   <media:group><media:title>${title}</media:title></media:group>
  </entry>`;
-const feed = (...entries) => `<?xml version="1.0"?><feed><title>Wolfthump</title>${entries.join('')}</feed>`;
+const feed = (...entries) => `<?xml version="1.0"?><feed><title>Featured</title>${entries.join('')}</feed>`;
 
-const CHANNEL_XML = feed(entry('aaaaaaaaaaa', 'Maracatu', '2026-11-19T16:04:19+00:00'),
-                         entry('bbbbbbbbbbb', 'Goosebumps', '2026-11-10T16:03:40+00:00'));
+// Playlist order on purpose: not date order (the newest video is last).
 const PLAYLIST_XML = feed(entry('aaaaaaaaaaa', 'Maracatu', '2026-11-19T16:04:19+00:00'),
                           entry('ccccccccccc', 'Fan clip &amp; &#39;friends&#39;', '2026-11-15T10:00:00+00:00',
-                                'UCother0000000000000000', 'Joe&apos;s Bar'));
+                                'UCother0000000000000000', 'Joe&apos;s Bar'),
+                          entry('bbbbbbbbbbb', 'Samba Duro', '2026-11-19T19:00:07+00:00'));
 
-let feeds;  // { channel: xml|status, playlist: xml|status }
-function stubFeeds() {
+let playlist;  // the feed's reply: XML text, or an HTTP status number
+function stubFeed() {
   calls = [];
   globalThis.fetch = async (url) => {
     calls.push({ url });
-    const v = url.includes('playlist_id=') ? feeds.playlist : feeds.channel;
-    return typeof v === 'number' ? new Response('', { status: v }) : new Response(v);
+    return typeof playlist === 'number' ? new Response('', { status: playlist }) : new Response(playlist);
   };
 }
-function getVideos({ env = VENV, origin = ORIGIN, method = 'GET', now } = {}) {
-  const req = new Request('https://w.example/videos', { method, headers: origin ? { origin } : {} });
-  return now === undefined ? worker.fetch(req, env) : import('./videos.mjs').then(m => m.handleVideos(req, env, now));
+function getVideos({ env = VENV, origin = ORIGIN, method = 'GET', path = '/videos', now } = {}) {
+  const req = new Request('https://w.example' + path, { method, headers: origin ? { origin } : {} });
+  return now === undefined ? worker.fetch(req, env) : handleVideos(req, env, now);
 }
 
 test('parseFeed reads id, title, date and channel, decoding entities', () => {
@@ -184,16 +183,22 @@ test('parseFeed skips entries with a missing or odd video id', () => {
   assert.deepEqual(parseFeed('not xml at all'), []);
 });
 
-test('mergeVideos de-dupes, sorts newest first, and marks our videos', () => {
-  const out = mergeVideos([parseFeed(CHANNEL_XML), parseFeed(PLAYLIST_XML)], US);
+test('an out-of-range character code in a title is left as text', () => {
+  const [v] = parseFeed(feed(entry('eeeeeeeeeee', 'Odd &#9999999; &#x110000; ok &#65;', '2026-01-01T00:00:00Z')));
+  assert.equal(v.title, 'Odd &#9999999; &#x110000; ok A');
+});
+
+test('toVideos keeps playlist order, drops repeats, and marks our videos', () => {
+  const entries = parseFeed(PLAYLIST_XML);
+  const out = toVideos([...entries, entries[0]], US);
   assert.deepEqual(out.map(v => [v.id, v.ours]),
                    [['aaaaaaaaaaa', true], ['ccccccccccc', false], ['bbbbbbbbbbb', true]]);
   assert.equal(out[1].channel, "Joe's Bar");
   assert.equal('channelId' in out[0], false);
 });
 
-test('GET /videos returns the merged list with CORS for the site', async () => {
-  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: PLAYLIST_XML }; stubFeeds();
+test('GET /videos returns the Featured playlist in its order, with CORS for the site', async () => {
+  _resetMemo(); playlist = PLAYLIST_XML; stubFeed();
   const res = await getVideos();
   assert.equal(res.status, 200);
   assert.equal(res.headers.get('access-control-allow-origin'), ORIGIN);
@@ -201,79 +206,62 @@ test('GET /videos returns the merged list with CORS for the site', async () => {
   const body = await res.json();
   assert.equal(body.ok, true);
   assert.deepEqual(body.videos.map(v => v.id), ['aaaaaaaaaaa', 'ccccccccccc', 'bbbbbbbbbbb']);
-  assert.ok(calls.some(c => c.url.includes('channel_id=' + US)));
-  assert.ok(calls.some(c => c.url.includes('playlist_id=PLtest')));
+  assert.equal(calls.length, 1, 'only the playlist feed is read');
+  assert.match(calls[0].url, /playlist_id=PLtest/);
 });
 
 test('GET /videos works without booking secrets and gives other origins no CORS', async () => {
-  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: PLAYLIST_XML }; stubFeeds();
+  _resetMemo(); playlist = PLAYLIST_XML; stubFeed();
   const res = await getVideos({ origin: 'https://evil.example' });
   assert.equal(res.status, 200);
   assert.equal(res.headers.get('access-control-allow-origin'), null);
 });
 
-test('one feed down still returns the other', async () => {
-  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: 500 }; stubFeeds();
-  const body = await (await getVideos()).json();
-  assert.deepEqual(body.videos.map(v => v.id), ['aaaaaaaaaaa', 'bbbbbbbbbbb']);
-});
-
 test('the list is reused for an hour, then refetched; stale beats an outage', async () => {
-  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: PLAYLIST_XML }; stubFeeds();
+  _resetMemo(); playlist = PLAYLIST_XML; stubFeed();
   const t0 = 1_000_000_000_000;
   await getVideos({ now: t0 });
-  assert.equal(calls.length, 2);
   await getVideos({ now: t0 + 59 * 60_000 });
-  assert.equal(calls.length, 2, 'served from memory');
-  feeds = { channel: 503, playlist: 503 };
+  assert.equal(calls.length, 1, 'served from memory');
+  playlist = 503;
   const res = await getVideos({ now: t0 + 61 * 60_000 });
-  assert.equal(calls.length, 4, 'refetched after an hour');
+  assert.equal(calls.length, 2, 'refetched after an hour');
   assert.equal(res.status, 200);
   assert.equal((await res.json()).videos.length, 3, 'last good list');
 });
 
-test('both feeds down with nothing cached answers 502', async () => {
-  _resetMemo(); feeds = { channel: 500, playlist: 500 }; stubFeeds();
-  assert.equal((await getVideos()).status, 502);
+test('after a failure, YouTube is retried in 5 minutes, not on every visit', async () => {
+  _resetMemo(); playlist = 503; stubFeed();
+  const t0 = 1_000_000_000_000;
+  assert.equal((await getVideos({ now: t0 })).status, 502, 'nothing cached yet');
+  await getVideos({ now: t0 + 4 * 60_000 });
+  assert.equal(calls.length, 1, 'no refetch inside the retry wait');
+  playlist = PLAYLIST_XML;
+  const res = await getVideos({ now: t0 + 5 * 60_000 });
+  assert.equal(calls.length, 2, 'retried after 5 minutes');
+  assert.equal(res.status, 200);
+});
+
+test('a reordered playlist shows up in the new order', async () => {
+  _resetMemo(); playlist = PLAYLIST_XML; stubFeed();
+  const t0 = 1_000_000_000_000;
+  await getVideos({ now: t0 });
+  playlist = feed(entry('bbbbbbbbbbb', 'Samba Duro', '2026-11-19T19:00:07+00:00'),
+                  entry('aaaaaaaaaaa', 'Maracatu', '2026-11-19T16:04:19+00:00'));
+  const body = await (await getVideos({ now: t0 + 61 * 60_000 })).json();
+  assert.deepEqual(body.videos.map(v => v.id), ['bbbbbbbbbbb', 'aaaaaaaaaaa']);
 });
 
 test('GET /videos needs its IDs and only allows GET', async () => {
-  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: PLAYLIST_XML }; stubFeeds();
+  _resetMemo(); playlist = PLAYLIST_XML; stubFeed();
   assert.equal((await getVideos({ env: { ALLOWED_ORIGINS: ORIGIN } })).status, 503);
   assert.equal((await getVideos({ method: 'POST' })).status, 405);
   assert.equal(calls.length, 0);
 });
 
-test('a feed that keeps failing never freezes the other one', async () => {
-  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: PLAYLIST_XML }; stubFeeds();
-  const t0 = 1_000_000_000_000;
-  await getVideos({ now: t0 });
-  // The playlist goes private for good; the channel gets a new upload.
-  feeds = { channel: feed(entry('ddddddddddd', 'New upload', '2026-11-20T10:00:00+00:00')), playlist: 404 };
-  const body = await (await getVideos({ now: t0 + 61 * 60_000 })).json();
-  assert.deepEqual(body.videos.map(v => v.id), ['ddddddddddd', 'aaaaaaaaaaa', 'ccccccccccc'],
-                   'new channel list + last good playlist');
-});
-
-test('after a failure, YouTube is retried in 5 minutes, not on every visit', async () => {
-  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: 503 }; stubFeeds();
-  const t0 = 1_000_000_000_000;
-  await getVideos({ now: t0 });
-  assert.equal(calls.length, 2);
-  await getVideos({ now: t0 + 4 * 60_000 });
-  assert.equal(calls.length, 2, 'no refetch inside the retry wait');
-  await getVideos({ now: t0 + 5 * 60_000 });
-  assert.equal(calls.length, 4, 'retried after 5 minutes');
-});
-
-test('an out-of-range character code in a title is left as text', () => {
-  const [v] = parseFeed(feed(entry('eeeeeeeeeee', 'Odd &#9999999; &#x110000; ok &#65;', '2026-01-01T00:00:00Z')));
-  assert.equal(v.title, 'Odd &#9999999; &#x110000; ok A');
-});
-
 test('/videos/ with a trailing slash reaches the video list', async () => {
-  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: PLAYLIST_XML }; stubFeeds();
-  const res = await worker.fetch(new Request('https://w.example/videos/', { headers: { origin: ORIGIN } }), VENV);
+  _resetMemo(); playlist = PLAYLIST_XML; stubFeed();
+  const res = await getVideos({ path: '/videos/' });
   assert.equal(res.status, 200);
   assert.equal((await res.json()).videos.length, 3);
 });

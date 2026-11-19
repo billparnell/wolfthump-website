@@ -1,22 +1,23 @@
 // GET /videos — the list behind videos.html.
 //
-// Reads two public YouTube feeds (no API key): the channel's uploads and the
-// "Featured" playlist, where the band adds anyone's videos. Merges them, drops
-// duplicates, and returns newest first. Each feed holds its latest 15 entries.
-// TECH_DESIGN.md "Videos" has the why.
+// Reads one public YouTube feed (no API key): the channel's "Featured" playlist.
+// Only videos in that playlist reach the site, in the playlist's own order, so
+// the band curates and orders the page by editing the playlist (uploads that
+// aren't in it stay off the site on purpose). The feed holds the playlist's
+// first 15 videos. TECH_DESIGN.md "Videos" has the why.
 //
-// Plain vars (worker/wrangler.jsonc): YT_CHANNEL_ID, YT_PLAYLIST_ID,
+// Plain vars (worker/wrangler.jsonc): YT_PLAYLIST_ID, YT_CHANNEL_ID (only to
+// tell our videos from other channels' for the "Posted by" credit),
 // ALLOWED_ORIGINS (shared with the booking form; only these get CORS headers).
 
 const FEED = 'https://www.youtube.com/feeds/videos.xml?';
 const FRESH_MS = 60 * 60 * 1000;  // after a clean fetch, reuse the list for an hour
-const RETRY_MS = 5 * 60 * 1000;   // after any feed fails, wait this long to retry
+const RETRY_MS = 5 * 60 * 1000;   // after a failed fetch, wait this long to retry
 const BROWSER_MAX_AGE = 600;      // seconds a browser may reuse a reply
 
 // Per-isolate memory. The Cache API is a no-op on workers.dev, so this is the
-// cache. Each feed keeps its own last good list, so one feed failing (even for
-// good) never freezes the other, and an outage serves what we had.
-let state = null;  // { nextAt, feeds: { channel: [...]|null, playlist: [...]|null } }
+// cache. It keeps the last good list, so a YouTube outage serves what we had.
+let state = null;  // { nextAt, videos: [...]|null }
 export function _resetMemo() { state = null; }
 
 const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
@@ -54,13 +55,12 @@ export function parseFeed(xml) {
   return out;
 }
 
-// Merge feeds, first copy of a video wins, newest first. `ours` marks videos
-// from the band's channel so the page can credit everyone else.
-export function mergeVideos(lists, ourChannelId) {
-  const seen = new Map();
-  for (const v of lists.flat()) if (!seen.has(v.id)) seen.set(v.id, v);
-  return [...seen.values()]
-    .sort((a, b) => (Date.parse(b.published) || 0) - (Date.parse(a.published) || 0))
+// Keep the playlist's order; drop a repeat of a video already listed. `ours`
+// marks videos from the band's channel so the page can credit everyone else.
+export function toVideos(entries, ourChannelId) {
+  const seen = new Set();
+  return entries
+    .filter(v => !seen.has(v.id) && seen.add(v.id))
     .map(({ channelId, ...v }) => ({ ...v, ours: channelId === ourChannelId }));
 }
 
@@ -89,20 +89,15 @@ export async function handleVideos(request, env, now = Date.now()) {
   }
 
   if (!state || now >= state.nextAt) {
-    const feeds = state ? state.feeds : { channel: null, playlist: null };
-    const [channel, playlist] = await Promise.allSettled([
-      fetchFeed('channel_id=' + encodeURIComponent(env.YT_CHANNEL_ID)),
-      fetchFeed('playlist_id=' + encodeURIComponent(env.YT_PLAYLIST_ID))
-    ]);
-    let allOk = true;
-    for (const [name, r] of [['channel', channel], ['playlist', playlist]]) {
-      if (r.status === 'fulfilled') feeds[name] = r.value;
-      else { allOk = false; console.error('videos', r.reason); }
+    try {
+      const entries = await fetchFeed('playlist_id=' + encodeURIComponent(env.YT_PLAYLIST_ID));
+      state = { videos: toVideos(entries, env.YT_CHANNEL_ID), nextAt: now + FRESH_MS };
+    } catch (err) {
+      console.error('videos', err);
+      state = { videos: state ? state.videos : null, nextAt: now + RETRY_MS };
     }
-    state = { feeds, nextAt: now + (allOk ? FRESH_MS : RETRY_MS) };
   }
 
-  const lists = Object.values(state.feeds).filter(Boolean);
-  if (lists.length) return reply(200, { ok: true, videos: mergeVideos(lists, env.YT_CHANNEL_ID) }, origin, env);
+  if (state.videos) return reply(200, { ok: true, videos: state.videos }, origin, env);
   return reply(502, { ok: false, error: 'Could not reach YouTube.' }, origin, env);
 }
