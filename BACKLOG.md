@@ -82,8 +82,8 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [ ] **Bill: redeploy the Worker** (`npx wrangler deploy -c worker/wrangler.jsonc`),
       rerun the `/videos` curl (expect Maracatu, Goosebumps, Samba Duro), then push.
       This replaces the redeploy step under "Review fixes".
-- [ ] Ask Bill: the page has no `<h1>` since `1a80cd0`. Make the "Videos" label
-      the `<h1>` (same look)? Then drop the unused `.videos-intro` CSS.
+- [x] Bill OK'd: the "Videos" label is now the page's `<h1>`, same look (checked
+      at 375px); unused `.videos-intro` and old `h1` CSS removed; `?v=6`.
 
 ## Booking form
 

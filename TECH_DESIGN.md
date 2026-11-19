@@ -104,7 +104,8 @@ booking checks, so the two don't share config requirements.
   (curl) still get the data, since it's public anyway. GET only.
 
 **`videos.html` (2026-11-19):** a second page, linked from the "More videos"
-button under the home-page video. Small logo (links home), the "Videos" label,
+button under the home-page video. Small logo (links home), the "Videos" label (it's the page's `<h1>`,
+styled as a `.section-label`),
 then one `.video-card` per video, built in vanilla JS from a `<template>`
 with `textContent` only (titles come from strangers' YouTube channels, so
 never `innerHTML`). Video ids are checked against `[\w-]{6,20}` again before
