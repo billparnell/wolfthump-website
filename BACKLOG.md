@@ -26,10 +26,14 @@ player stacked under the full-screen, fixed, live SVG noise filter.
 - [ ] Bill: confirm on iPhone that the glitches are gone. If yes, decide:
       leave water off, or bring it back without the blend and resize reset.
       Then decide whether the grain comes back (it was probably innocent).
-- [ ] If it still glitches with both off, next suspects in order: the
-      YouTube iframe (test by temporarily swapping in a click-to-load
-      thumbnail), the hero's infinite ripple animations, the logo's double
-      `drop-shadow` filter.
+- [x] Bill: still a little glitchy with both off. Home video is now
+      **tap-to-load**: our poster + play ring, YouTube loads on tap, second tap
+      plays on iPhone (Bill OK'd two taps). See TECH_DESIGN. `?v=11`; tagline
+      hyphen back on as the deploy marker.
+- [ ] Bill: iPhone check after deploy. If smooth, un-hyphenate the tagline,
+      then decide whether water and/or grain come back (one at a time). If
+      still glitchy, next suspects: the hero's infinite ripple animations, the
+      logo's double `drop-shadow` filter.
 
 ## Videos (decided 2026-11-19, see PRODUCT_BRIEF)
 
@@ -96,8 +100,9 @@ player stacked under the full-screen, fixed, live SVG noise filter.
 - [ ] **Bill: confirm on the iPhone that one tap plays with sound**
       and that starting a second video pauses the first. (Headless Chrome isn't
       Safari, so this is the one thing only the phone can confirm.)
-- [ ] Bill to decide: delete `video/` (old home-page mp4 + poster, still public
-      at /video/…) or add `video/` to `_config.yml` exclude. Don't delete unasked.
+- [ ] Bill to decide: delete `video/womens_club_2025.mp4` (20 MB, unused, still
+      public at /video/…). **Keep `video/poster.jpg`**: the home page uses it
+      again (2026-11-19). Don't delete unasked.
 
 ### Featured-only, in playlist order — 2026-11-19
 - [x] Cards no longer show the upload date (Bill: confusing; the show date is
@@ -229,9 +234,9 @@ player stacked under the full-screen, fixed, live SVG noise filter.
      can't test this; only the phone can.
   2. Send **one test booking inquiry** from wolfthump.com. The Worker has been
      redeployed twice since the form was last tested.
-  3. Decide what happens to `video/` (the old home-page mp4 + poster, unused
-     but still public at /video/…): delete it, or add `video/` to the
-     `_config.yml` exclude. **Don't delete it without his OK.**
+  3. Decide whether to delete the unused `video/womens_club_2025.mp4`. Keep
+     `video/poster.jpg` (the home video uses it). **Don't delete without his OK.**
+  4. iPhone check of the glitch fixes: see "iPhone crash fix" at the top.
 - **Next task:** none queued. The videos feature is done. If the phone check
   fails, see TECH_DESIGN "Videos" → "Why the real player" for what's been
   tried.

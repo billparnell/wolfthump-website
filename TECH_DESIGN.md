@@ -72,7 +72,15 @@ mush below 64px.
 starts it on the first video in the channel's **Featured** playlist, so the
 home-page video changes when someone reorders the playlist in YouTube Studio,
 with no code change. Channel `@wolfthumpgrooves` = `UCvJxyIG6eTOkeZhJ7zi3brQ`.
-The self-hosted `video/womens_club_2025.mp4` is no longer used.
+**Tap-to-load (2026-11-19, same day):** the iframe isn't in the page at
+first. `#home-video` is a `<button class="video-placeholder video-poster">`
+showing `video/poster.jpg` and the site's `.play-ring` (not YouTube's
+thumbnail or red button). A tap swaps in the iframe with `autoplay=1`;
+desktop usually plays at once, iPhone usually needs a second tap (Bill's call:
+two taps is fine). Reason: iPhone glitches while scrolling (see BACKLOG), so no
+YouTube code loads until it's wanted. `.video-poster` is the one new pattern;
+it builds on the old `.video-placeholder`/`.play-ring` styles.
+`video/poster.jpg` is used again. The mp4 next to it is not.
 
 **`GET /videos` on the Worker (2026-11-19)** feeds `videos.html`. It lives in
 `worker/videos.mjs`; `contact.mjs` routes the `/videos` path there before any

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/default.css?v=10">
+  <link rel="stylesheet" href="css/default.css?v=11">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 </head>
@@ -24,7 +24,7 @@
       <img src="img/wolfthump_logo.png" alt="Wolfthump">
     </div>
     <!-- <p class="hero-tagline">Afro-Brazilian Bateria Meets Modern Day Drum Funk &nbsp;·&nbsp; Chico, California</p> -->
-    <p class="hero-tagline">Afro-Brazilian Bateria Meets Modern Day Drum Funk</p>
+    <p class="hero-tagline">Afro-Brazilian Bateria Meets Modern-Day Drum Funk</p>
     <div class="scroll-hint">
       <span>Scroll</span>
       <div class="scroll-arrow"></div>
@@ -34,14 +34,30 @@
   <!-- VIDEO -->
   <section class="video-section">
     <div class="video-wrap">
-      <!-- Plays the first video in the YouTube "Featured" playlist. To change it,
-           drag another video to the top of that playlist in YouTube Studio. -->
-      <iframe loading="lazy"
-              src="https://www.youtube-nocookie.com/embed/videoseries?list=PLMbeFSuVov64"
-              title="Wolfthump video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen></iframe>
+      <!-- Tap-to-load: shows our own poster until tapped, then swaps in the
+           YouTube player for the first video in the "Featured" playlist (to
+           change it, drag another video to the top of that playlist in YouTube
+           Studio). Nothing from YouTube loads until the tap, which keeps the
+           page light on iPhones. On iPhone it usually takes a second tap to play. -->
+      <button type="button" class="video-placeholder video-poster" id="home-video"
+              data-src="https://www.youtube-nocookie.com/embed/videoseries?list=PLMbeFSuVov64&amp;autoplay=1&amp;playsinline=1"
+              aria-label="Play video">
+        <span class="play-ring" aria-hidden="true"></span>
+      </button>
+      <script>
+      (function () {
+        var btn = document.getElementById('home-video');
+        btn.addEventListener('click', function () {
+          var f = document.createElement('iframe');
+          f.src = btn.getAttribute('data-src');
+          f.title = 'Wolfthump video';
+          f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+          f.referrerPolicy = 'strict-origin-when-cross-origin';
+          f.allowFullscreen = true;
+          btn.replaceWith(f);
+        });
+      })();
+      </script>
     </div>
     <div class="more-videos">
       <a class="form-button" href="videos.html">More videos</a>
