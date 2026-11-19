@@ -22,8 +22,7 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
       sizes it, so no CSS change. Bill checked it locally and it looks good.
 - [x] "More videos" button **moved to V3**, so it never points at a page that
       doesn't exist yet.
-- [ ] The Women's Club clips are on YouTube now, so ask Bill whether the
-      self-hosted `video/` files can go. Don't delete them without asking.
+- [x] ~~Ask about the `video/` files~~ → one open item under "Review fixes".
 
 ### Phase V2 — Worker `/videos` route — ✅ DONE 2026-11-19
 - [x] `worker/videos.mjs` + a `/videos` route in `contact.mjs`: fetch both feeds,
@@ -51,9 +50,8 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
       scroll (fixed a 500px-wide grid), 3 cards, tap swaps in the player and
       restores the previous one, error state. Console clean apart from the
       Turnstile 110200 that every local preview gets (wrong hostname).
-- [ ] Bill: push, then check wolfthump.com/videos.html on the iPhone, including
-      that a video plays.
-- [ ] Ask Bill whether the self-hosted `video/` files can be deleted (see V1).
+- [x] Pushed. The iPhone check found the two-tap bug; the open check is under "Featured-only".
+- [x] ~~`video/` files~~ → one open item under "Review fixes".
 
 ### Review fixes — 2026-11-19 (`/code-review` + `/security-review`)
 `/security-review`: no findings. From `/code-review`:
@@ -69,7 +67,7 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [x] iPhone check found it took **two taps**. Fixed 2026-11-19: each card is
       now YouTube's own player (one tap, like the home page), our full title
       under it, and starting one pauses the others. `?v=7`.
-- [ ] **Bill: after pushing, confirm on the iPhone that one tap plays with sound**
+- [ ] **Bill: confirm on the iPhone that one tap plays with sound**
       and that starting a second video pauses the first. (Headless Chrome isn't
       Safari, so this is the one thing only the phone can confirm.)
 - [ ] Bill to decide: delete `video/` (old home-page mp4 + poster, still public
@@ -85,9 +83,9 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
       passing); live run gives the real playlist order.
 - [x] Bill's own commit `1a80cd0` removed the "Watch Wolfthump" heading and
       the "Tap a video to play it." line from `videos.html`.
-- [ ] **Bill: redeploy the Worker** (`npx wrangler deploy -c worker/wrangler.jsonc`),
-      rerun the `/videos` curl (expect Maracatu, Goosebumps, Samba Duro), then push.
-      This replaces the redeploy step under "Review fixes".
+- [x] Worker redeployed and pushed. Confirmed live at /wrap 2026-11-19: `/videos`
+      returns Maracatu, Goosebumps, Samba Duro; `/videos/` answers 200;
+      wolfthump.com/videos.html serves `?v=7` with the YouTube players.
 - [x] Bill OK'd: the "Videos" label is now the page's `<h1>`, same look (checked
       at 375px); unused `.videos-intro` and old `h1` CSS removed; `?v=6`.
 
@@ -185,6 +183,36 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 ---
 
 ## Log
+
+### Where we are (2026-11-19, end of session — supersedes the notes below)
+- **State:** live at https://wolfthump.com. Everything is pushed, and the
+  Worker is deployed (both checked with curl at /wrap). The tree is clean and
+  `node --test worker/contact.test.mjs` passes 26/26.
+  - **Home page:** plays the first video in the YouTube **Featured** playlist
+    (channel `@wolfthumpgrooves`), with a "More videos" button under it.
+  - **`videos.html`:** the Featured playlist in **playlist order**, one
+    YouTube player per card, with our full title under each and "Posted by …"
+    for other channels' videos. No dates. Starting one video pauses the others.
+  - **Managed entirely in YouTube:** add a video to Featured to show it, drag
+    to reorder, and the top video is the home-page video. Changes show within
+    about an hour. Channel uploads that aren't in Featured stay off the site on
+    purpose.
+- **Waiting on Bill:**
+  1. On the iPhone: confirm **one tap** plays a video on videos.html with
+     sound, and that starting a second one pauses the first. Headless Chrome
+     can't test this; only the phone can.
+  2. Send **one test booking inquiry** from wolfthump.com. The Worker has been
+     redeployed twice since the form was last tested.
+  3. Decide what happens to `video/` (the old home-page mp4 + poster, unused
+     but still public at /video/…): delete it, or add `video/` to the
+     `_config.yml` exclude. **Don't delete it without his OK.**
+- **Next task:** none queued. The videos feature is done. If the phone check
+  fails, see TECH_DESIGN "Videos" → "Why the real player" for what's been
+  tried.
+- **For the next session:** to check 375px without the Chrome extension, read
+  PLAYBOOK "Checking 375px from the terminal" and reuse `groove-bank/tools/`
+  (CDP driver). This session rebuilt that from scratch. The local preview needs
+  a server that answers `/videos` too (see TECH_DESIGN "videos.html" → VIDEOS_URL).
 
 - **2026-11-19:** Video cards are YouTube's own players now (iPhone needed
   two taps with our thumbnails). Page-only; push is enough. Bill confirms one
