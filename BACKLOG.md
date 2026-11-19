@@ -7,19 +7,21 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 
 ## Videos (decided 2026-11-19, see PRODUCT_BRIEF)
 
-### Phase V0 — Bill/Mike, on YouTube (blocks V1)
-- [ ] Send the channel URL or @handle (we need the `UC…` channel ID).
-- [ ] On the channel, create a public playlist "Featured" and send its link
-      (we need the `PL…` playlist ID). Put the home-page video first.
-- [ ] Upload `video/womens_club_2025.mp4` to the channel if it should stay the
-      home-page video, and add it to Featured.
+### Phase V0 — Bill/Mike, on YouTube — ✅ DONE 2026-11-19
+- [x] Channel `@wolfthumpgrooves`, channel ID **`UCvJxyIG6eTOkeZhJ7zi3brQ`**.
+- [x] Public playlist "Featured", ID **`PLMbeFSuVov64`** (a newer, shorter ID
+      format, but it's correct: the feed and the playlists page both confirm it).
+- [x] Both feeds return 200 with entries (checked with curl): the Women's Club
+      11/13/26 clips (Maracatu, Goosebumps, …) are on the channel and in Featured.
+      `https://www.youtube.com/feeds/videos.xml?channel_id=…` / `?playlist_id=…`
 
 ### Phase V1 — Home page embed
 - [ ] Replace the self-hosted `<video>` in `index.html` with a responsive
       `youtube-nocookie.com/embed/videoseries?list=<PL id>` iframe (it starts on
       the playlist's first video). Keep the existing `.video-wrap` sizing.
 - [ ] Add a big "More videos" button linking to `videos.html`.
-- [ ] Decide whether `video/` files can be deleted (ask Bill; don't delete them).
+- [ ] The Women's Club clips are on YouTube now, so ask Bill whether the
+      self-hosted `video/` files can go. Don't delete them without asking.
 
 ### Phase V2 — Worker `/videos` route
 - [ ] `GET /videos` in the existing Worker: fetch
