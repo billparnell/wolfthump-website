@@ -19,7 +19,15 @@ player stacked under the full-screen, fixed, live SVG noise filter.
       commented out in `default.css`, `?v=9`). Hero tagline now says
       "Modern-Day" (hyphen) so Bill can tell when the deploy is live; keep or
       revert as he likes.
-- [ ] If it still glitches with the overlay off, next suspects in order: the
+- [x] What Bill saw "moving in slow motion" wasn't the grain: it's the
+      **water-ripple canvas** (`#water-canvas`, since May): fixed, full-screen,
+      redrawn every frame, `mix-blend-mode: screen` over the YouTube iframe,
+      and wiped on every iOS address-bar `resize`. Prime suspect. **Turned off**
+      (`WATER_ON = false` in `index.html` + `display: none` in CSS, `?v=10`).
+- [ ] Bill: confirm on iPhone that the glitches are gone. If yes, decide:
+      leave water off, or bring it back without the blend and resize reset.
+      Then decide whether the grain comes back (it was probably innocent).
+- [ ] If it still glitches with both off, next suspects in order: the
       YouTube iframe (test by temporarily swapping in a click-to-load
       thumbnail), the hero's infinite ripple animations, the logo's double
       `drop-shadow` filter.

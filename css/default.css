@@ -530,6 +530,7 @@ footer p {
   z-index: 100;
   mix-blend-mode: screen;
   opacity: 0.15;
+  display: none;  /* OFF 2026-11-19, see WATER_ON in index.html */
 }
 @media (prefers-reduced-motion: reduce) {
   #water-canvas { display: none; }
