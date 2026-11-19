@@ -25,20 +25,24 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 - [ ] The Women's Club clips are on YouTube now, so ask Bill whether the
       self-hosted `video/` files can go. Don't delete them without asking.
 
-### Phase V2 — Worker `/videos` route
-- [ ] `GET /videos` in the existing Worker: fetch
-      `youtube.com/feeds/videos.xml?channel_id=…` and `…?playlist_id=…`, parse
-      the entries (id, title, published, channel name), merge, de-dupe by video
-      id, sort newest first, return JSON. Cache about an hour (Cache API).
-      CORS for the site origins only.
-- [ ] Channel and playlist IDs go in `wrangler.jsonc` vars (they're public, not secrets).
-- [ ] Tests in `worker/contact.test.mjs` with a fixture feed (parse, merge,
-      de-dupe, sort, one feed down still returns the other).
-- [ ] Deploy by hand: `npx wrangler deploy -c worker/wrangler.jsonc`.
+### Phase V2 — Worker `/videos` route — built 2026-11-19, ⏳ deploy pending
+- [x] `worker/videos.mjs` + a `/videos` route in `contact.mjs`: fetch both feeds,
+      parse, merge, de-dupe, newest first, JSON. CORS for the site origins only.
+      Caching is in memory, because the Cache API is a no-op on workers.dev. See TECH_DESIGN.
+- [x] `YT_CHANNEL_ID`, `YT_PLAYLIST_ID` in `wrangler.jsonc` vars.
+- [x] 9 tests added to `worker/contact.test.mjs` (24 total, all passing). Also
+      ran against the live YouTube feeds: 3 videos, right order and headers.
+- [ ] **Bill deploys** (in his Terminal, repo folder):
+      `npx wrangler deploy -c worker/wrangler.jsonc`, then check
+      `curl -s -H 'Origin: https://wolfthump.com' https://wolfthump-contact.bparnell.workers.dev/videos`
+      returns `{"ok":true,"videos":[…]}`. This redeploys the booking form too,
+      so send one test inquiry from the live site afterwards.
 
 ### Phase V3 — `videos.html`
 - [ ] "More videos" button under the home-page video, linking to `videos.html`
       (moved from V1). Same look as `.form-button`, ≥56px tall.
+- [ ] Page fetches `https://wolfthump-contact.bparnell.workers.dev/videos`
+      (a constant at the top of its script, like `CONTACT_URL`).
 - [ ] New page, same header and footer, and tokens from `default.css` (bump `?v=`).
 - [ ] A grid of thumbnail cards (`i.ytimg.com/vi/<id>/hqdefault.jpg`), title,
       date, and "Posted by …" when the video isn't from our channel. Tap a card to
@@ -140,6 +144,9 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 ---
 
 ## Log
+
+- **2026-11-19:** Videos V2 built and committed: Worker `GET /videos`. Not
+  deployed yet (Bill runs the deploy). Next: V3, `videos.html`.
 
 - **2026-11-19:** Videos V0 + V1 done. The home page plays the first video in the
   YouTube "Featured" playlist. Next: V2, the Worker `/videos` route.

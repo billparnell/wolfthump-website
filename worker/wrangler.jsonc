@@ -11,7 +11,11 @@
   "vars": {
     // Every origin the page is served from. Update when wolfthump.com points
     // at the site.
-    "ALLOWED_ORIGINS": "https://billparnell.github.io,https://wolfthump.com,https://www.wolfthump.com"
+    "ALLOWED_ORIGINS": "https://billparnell.github.io,https://wolfthump.com,https://www.wolfthump.com",
+    // GET /videos reads these two public YouTube feeds (videos.mjs). They are
+    // public IDs, not secrets: channel @wolfthumpgrooves and its "Featured" playlist.
+    "YT_CHANNEL_ID": "UCvJxyIG6eTOkeZhJ7zi3brQ",
+    "YT_PLAYLIST_ID": "PLMbeFSuVov64"
   },
 
   // Per-IP: 3 submissions a minute. Turnstile is the real gate; this caps

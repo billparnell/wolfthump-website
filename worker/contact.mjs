@@ -16,6 +16,11 @@
 // Plain var (worker/wrangler.jsonc):
 //   ALLOWED_ORIGINS   comma-separated origins allowed to post the form
 // Optional binding: LIMITER (Workers rate limiting). Missing = no limit.
+//
+// GET /videos is the videos page's feed, handled in videos.mjs. Every other
+// path is the booking form, as before.
+
+import { handleVideos } from './videos.mjs';
 
 const LIMITS = { name: 100, email: 254, message: 5000, body: 20000 };
 const MIN_FILL_MS = 3000;  // faster than this is a script, not a person
@@ -113,6 +118,8 @@ function confirmationEmail(env, { email }) {
 
 export default {
   async fetch(request, env) {
+    if (new URL(request.url).pathname === '/videos') return handleVideos(request, env);
+
     const missing = REQUIRED.filter(k => !env[k]);
     if (missing.length) return json(503, { ok: false, error: 'The form is not switched on yet.' });
 

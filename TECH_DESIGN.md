@@ -74,6 +74,29 @@ home-page video changes when someone reorders the playlist in YouTube Studio,
 with no code change. Channel `@wolfthumpgrooves` = `UCvJxyIG6eTOkeZhJ7zi3brQ`.
 The self-hosted `video/womens_club_2025.mp4` is no longer used.
 
+**`GET /videos` on the Worker (2026-11-19)** feeds `videos.html`. It lives in
+`worker/videos.mjs`; `contact.mjs` routes the `/videos` path there before any
+booking checks, so the two don't share config requirements.
+- Reads YouTube's public feeds, with **no API key**:
+  `youtube.com/feeds/videos.xml?channel_id=YT_CHANNEL_ID` and
+  `?playlist_id=YT_PLAYLIST_ID` (plain vars in `wrangler.jsonc`; public IDs).
+  Each feed holds only its **latest 15** entries.
+- Parses `<entry>` blocks with regexes (Workers have no DOMParser) and decodes
+  XML entities. An entry whose video id isn't `[\w-]{6,20}` is dropped, because
+  the id goes into URLs on the page.
+- Merges the feeds, de-dupes by video id, sorts by `published` (the video's own
+  upload date, in both feeds), newest first. Returns
+  `{ ok, videos: [{ id, title, published, channel, ours }] }`; `ours` is false
+  for videos from other channels, so the page can add "Posted by {channel}".
+- **Caching:** the Cache API is a no-op on `workers.dev`, so each isolate keeps
+  the last list in memory and refetches YouTube at most hourly. If both feeds
+  fail it serves that last good list; one feed failing returns the other
+  (and retries next request). Nothing cached and both down → 502. Browsers may
+  reuse a 200 for 10 minutes (`max-age=600`). So a new upload shows up within
+  about an hour, sometimes sooner when a fresh isolate starts.
+- CORS: `access-control-allow-origin` only for `ALLOWED_ORIGINS`. Other callers
+  (curl) still get the data, since it's public anyway. GET only.
+
 ## Booking form
 
 **Flow:** the page POSTs JSON to the Worker, and the Worker runs these checks
@@ -124,7 +147,9 @@ Turnstile, because each token works only once.
 
 ## Tests
 `node --test worker/contact.test.mjs`. It needs no dependencies, mocks `fetch`,
-and covers every row of the table above.
+and covers every row of the booking table above plus `/videos` (parsing,
+entities, merge/de-dupe/sort, CORS, one feed down, hourly memo, stale-on-outage,
+502, 503, 405). The `videos … feed 500` lines in the output are expected logs.
 
 ## Visual system
 Tokens are on `:root` in `css/default.css` (deep-water / teal / cream / gold),
