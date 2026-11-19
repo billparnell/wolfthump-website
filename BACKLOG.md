@@ -17,8 +17,7 @@ player stacked under the full-screen, fixed, live SVG noise filter.
       home page and videos page on the iPhone a few times.
 - [x] Bill: still glitching with the tile. **Grain overlay disabled** (rule
       commented out in `default.css`, `?v=9`). Hero tagline now says
-      "Modern-Day" (hyphen) so Bill can tell when the deploy is live; keep or
-      revert as he likes.
+      "Modern-Day" (hyphen) as a deploy marker; reverted to "Modern Day" after.
 - [x] What Bill saw "moving in slow motion" wasn't the grain: it's the
       **water-ripple canvas** (`#water-canvas`, since May): fixed, full-screen,
       redrawn every frame, `mix-blend-mode: screen` over the YouTube iframe,
