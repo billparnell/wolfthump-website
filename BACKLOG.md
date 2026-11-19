@@ -34,6 +34,10 @@ player stacked under the full-screen, fixed, live SVG noise filter.
 - [x] Videos page back to our thumbnails + play ring (no red button), tap to
       load, so it matches the home page. Home play ring now uses the same cream
       style. `?v=12`.
+- [x] Home poster now follows Featured: picture + tap both come from the top
+      Featured video via the Worker's `/videos` (fallback: `poster.jpg`).
+      `?v=13`. Live check: `/videos` answers wolfthump.com with CORS, top
+      video's thumbnail exists. Not browser-checked (no extension).
 - [ ] Bill: decide whether the water and/or grain come back (one at a time,
       with an iPhone check after each). Both are only switched off, not deleted.
 

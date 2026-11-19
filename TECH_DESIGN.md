@@ -80,7 +80,15 @@ desktop usually plays at once, iPhone usually needs a second tap (Bill's call:
 two taps is fine). Reason: iPhone glitches while scrolling (see BACKLOG), so no
 YouTube code loads until it's wanted. `.video-poster` is the one new pattern;
 it builds on the old `.video-placeholder`/`.play-ring` styles.
-`video/poster.jpg` is used again. The mp4 next to it is not.
+**Picture follows Featured (2026-11-19, later):** the poster is no longer a
+fixed file. On load, `index.html` fetches the Worker's `GET /videos` (same
+Featured list, playlist order, as videos.html) and sets the button's
+background to the top video's `i.ytimg.com/vi/{id}/hqdefault.jpg` (`cover`
+crops its 4:3 black bars) and its `data-src` to that exact video. The box is
+plain dark until the Worker answers; if the fetch fails, `video/poster.jpg`
+shows and the tap plays the playlist (`videoseries`). So reordering Featured
+updates the home page within the Worker's cache time (about an hour).
+`video/poster.jpg` is the fallback only. The mp4 next to it is unused.
 
 **`GET /videos` on the Worker (2026-11-19)** feeds `videos.html`. It lives in
 `worker/videos.mjs`; `contact.mjs` routes the `/videos` path there before any

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/default.css?v=12">
+  <link rel="stylesheet" href="css/default.css?v=13">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 </head>
@@ -34,7 +34,7 @@
   <!-- VIDEO -->
   <section class="video-section">
     <div class="video-wrap">
-      <!-- Tap-to-load: shows our own poster until tapped, then swaps in the
+      <!-- Tap-to-load: shows the top Featured video's picture until tapped, then swaps in the
            YouTube player for the first video in the "Featured" playlist (to
            change it, drag another video to the top of that playlist in YouTube
            Studio). Nothing from YouTube loads until the tap, which keeps the
@@ -47,6 +47,23 @@
       <script>
       (function () {
         var btn = document.getElementById('home-video');
+        // Picture: the top video in the Featured playlist, from the Worker's
+        // GET /videos (same list as videos.html, cached there for up to an
+        // hour). Until it answers the box is plain dark; if it fails, our own
+        // poster shows and the tap still plays the playlist's first video.
+        var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+        var VIDEOS_URL = LOCAL ? '/videos' : 'https://wolfthump-contact.bparnell.workers.dev/videos';
+        function fallback() { btn.style.backgroundImage = 'url("video/poster.jpg")'; }
+        fetch(VIDEOS_URL)
+          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+          .then(function (data) {
+            var v = data && data.videos && data.videos[0];
+            if (!v || !/^[\w-]{6,20}$/.test(v.id)) return fallback();
+            btn.style.backgroundImage = 'url("https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg")';
+            btn.setAttribute('data-src', 'https://www.youtube-nocookie.com/embed/' + v.id + '?autoplay=1&rel=0&playsinline=1');
+            if (v.title) btn.setAttribute('aria-label', 'Play ' + v.title);
+          })
+          .catch(fallback);
         btn.addEventListener('click', function () {
           var f = document.createElement('iframe');
           f.src = btn.getAttribute('data-src');
