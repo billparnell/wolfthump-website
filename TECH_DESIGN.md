@@ -118,7 +118,15 @@ then one `.video-card` per video, built in vanilla JS from a `<template>`
 with `textContent` only (titles come from strangers' YouTube channels, so
 never `innerHTML`). Video ids are checked against `[\w-]{6,20}` again before
 they go into a URL.
-- **Card (reworked 2026-11-19):** YouTube's own player (a `youtube-nocookie`
+- **Card, REVERTED same day (2026-11-19, later):** back to the first version:
+  a `<button class="video-thumb">` with YouTube's `hqdefault.jpg` still and our
+  `.play-ring` (no red button). A tap swaps in the player with `autoplay=1`;
+  on iPhone a second tap plays, and opening another card puts the first back
+  to its thumbnail. No `iframe_api` script. Why: Bill's call, after the home
+  page's iPhone glitches went away with tap-to-load; two taps is accepted, the
+  pages match, and nothing from YouTube loads until a tap. The notes below
+  describe the player version (commit 9703266), kept as the way back.
+- **Card (player version, 2026-11-19, superseded):** YouTube's own player (a `youtube-nocookie`
   iframe, `loading="lazy"`, `enablejsapi=1`), then our full title, then
   "Posted by {channel}" when `ours` is false (`hidden` otherwise). No date: the
   Worker still sends `published`, but it's the upload date, not the show date.
@@ -210,7 +218,10 @@ with Cinzel for headings and Crimson Pro for body text, 18px base.
 - **One card family:** `.booking-card` and `.video-card` share the same border and
   background rule. Video cards drop the padding so the thumbnail runs edge to edge.
 - **Colors added with videos.html are tokens:** `--night`, `--night-deep`,
-  `--pale-water-30` (the play-ring tokens went with the custom thumbnails). Older rules still have the
+  `--pale-water-30`, plus the play-ring tokens `--night-deep-60` and `--cream-70`
+  (back with the thumbnails, 2026-11-19). **One play button:** `.play-ring`,
+  cream ring + warm-white triangle on a dark backing, on both `.video-thumb`
+  (videos page) and `.video-poster` (home). Older rules still have the
   same values spelled out; switch them over when touching those rules.
 - **One button:** `.form-button`. On an `<a>` (`a.form-button`) it centers its
   label with flex: "More videos" and "See us on YouTube".

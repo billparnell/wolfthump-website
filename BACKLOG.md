@@ -30,10 +30,12 @@ player stacked under the full-screen, fixed, live SVG noise filter.
       **tap-to-load**: our poster + play ring, YouTube loads on tap, second tap
       plays on iPhone (Bill OK'd two taps). See TECH_DESIGN. `?v=11`; tagline
       hyphen back on as the deploy marker.
-- [ ] Bill: iPhone check after deploy. If smooth, un-hyphenate the tagline,
-      then decide whether water and/or grain come back (one at a time). If
-      still glitchy, next suspects: the hero's infinite ripple animations, the
-      logo's double `drop-shadow` filter.
+- [x] Bill: that fixed it. Tagline back to "Modern Day".
+- [x] Videos page back to our thumbnails + play ring (no red button), tap to
+      load, so it matches the home page. Home play ring now uses the same cream
+      style. `?v=12`.
+- [ ] Bill: decide whether the water and/or grain come back (one at a time,
+      with an iPhone check after each). Both are only switched off, not deleted.
 
 ## Videos (decided 2026-11-19, see PRODUCT_BRIEF)
 
@@ -97,9 +99,8 @@ player stacked under the full-screen, fixed, live SVG noise filter.
 - [x] iPhone check found it took **two taps**. Fixed 2026-11-19: each card is
       now YouTube's own player (one tap, like the home page), our full title
       under it, and starting one pauses the others. `?v=7`.
-- [ ] **Bill: confirm on the iPhone that one tap plays with sound**
-      and that starting a second video pauses the first. (Headless Chrome isn't
-      Safari, so this is the one thing only the phone can confirm.)
+- [x] ~~Bill: confirm one tap plays~~ → moot: back to thumbnails, two taps
+      accepted (2026-11-19).
 - [ ] Bill to decide: delete `video/womens_club_2025.mp4` (20 MB, unused, still
       public at /video/…). **Keep `video/poster.jpg`**: the home page uses it
       again (2026-11-19). Don't delete unasked.
@@ -229,17 +230,15 @@ player stacked under the full-screen, fixed, live SVG noise filter.
     about an hour. Channel uploads that aren't in Featured stay off the site on
     purpose.
 - **Waiting on Bill:**
-  1. On the iPhone: confirm **one tap** plays a video on videos.html with
-     sound, and that starting a second one pauses the first. Headless Chrome
-     can't test this; only the phone can.
+  1. On the iPhone: check videos.html thumbnails show and a tap (or two)
+     plays a video.
   2. Send **one test booking inquiry** from wolfthump.com. The Worker has been
      redeployed twice since the form was last tested.
   3. Decide whether to delete the unused `video/womens_club_2025.mp4`. Keep
      `video/poster.jpg` (the home video uses it). **Don't delete without his OK.**
-  4. iPhone check of the glitch fixes: see "iPhone crash fix" at the top.
-- **Next task:** none queued. The videos feature is done. If the phone check
-  fails, see TECH_DESIGN "Videos" → "Why the real player" for what's been
-  tried.
+  4. Water/grain: bring back or leave off. See "iPhone crash fix" at the top.
+- **Next task:** none queued. The videos feature is done; both pages are
+  tap-to-load. TECH_DESIGN "Videos" has the player version as the way back.
 - **For the next session:** to check 375px without the Chrome extension, read
   PLAYBOOK "Checking 375px from the terminal" and reuse `groove-bank/tools/`
   (CDP driver). This session rebuilt that from scratch. The local preview needs

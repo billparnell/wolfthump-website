@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/default.css?v=11">
+  <link rel="stylesheet" href="css/default.css?v=12">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 </head>
@@ -38,24 +38,20 @@
 
   <template id="video-card-template">
     <article class="video-card">
-      <div class="video-frame">
-        <iframe loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
-      </div>
+      <button type="button" class="video-thumb">
+        <img alt="" loading="lazy" width="480" height="360">
+        <span class="play-ring" aria-hidden="true"></span>
+      </button>
       <div class="video-card-body">
         <h2 class="video-title"></h2>
-        <p class="video-meta" hidden></p>
+        <p class="video-meta"></p>
       </div>
     </article>
   </template>
 
   <script>
-  // Video list from the Worker's GET /videos (worker/videos.mjs): the YouTube
-  // "Featured" playlist, in playlist order. TECH_DESIGN "Videos".
-  //
-  // Each card is YouTube's own player, not a thumbnail we swap out on a tap:
-  // iPhones only play sound when the tap lands on the player itself, so a
-  // swapped-in player needed a second tap (Bill's phone, 2026-11-19).
+  // Video list from the Worker's GET /videos (worker/videos.mjs): our channel's
+  // uploads plus the YouTube "Featured" playlist, newest first. TECH_DESIGN "Videos".
   (function () {
     // Locally the preview server answers /videos itself (the Worker only allows
     // the real site's address), so the page can be checked before it's pushed.
@@ -65,49 +61,44 @@
     var list = document.getElementById('video-list');
     var status = document.getElementById('videos-status');
     var template = document.getElementById('video-card-template');
+    var playing = null;  // the card whose thumbnail is swapped for a player
 
-    // One video at a time: YouTube's player API tells us when one starts, and
-    // we pause the rest. If the API script fails to load, the players still
-    // work; two could just play at once.
-    var frames = [], players = [], apiReady = false;
-    function attach(iframe) {
-      var player = new YT.Player(iframe, {
-        events: {
-          onStateChange: function (e) {
-            if (e.data !== YT.PlayerState.PLAYING) return;
-            players.forEach(function (p) {
-              if (p !== player && p.pauseVideo && p.getPlayerState && p.getPlayerState() === YT.PlayerState.PLAYING) p.pauseVideo();
-            });
-          }
-        }
-      });
-      players.push(player);
+    function stopPlaying() {
+      if (!playing) return;
+      playing.card.replaceChild(playing.thumb, playing.frame);
+      playing = null;
     }
-    window.onYouTubeIframeAPIReady = function () {
-      apiReady = true;
-      frames.forEach(attach);
-    };
+
+    function play(card, thumb, video) {
+      stopPlaying();
+      var frame = document.createElement('div');
+      frame.className = 'video-frame';
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + video.id + '?autoplay=1&rel=0&playsinline=1';
+      iframe.title = video.title;
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allowFullscreen = true;
+      frame.appendChild(iframe);
+      card.replaceChild(frame, thumb);
+      playing = { card: card, thumb: thumb, frame: frame };
+    }
 
     function render(videos) {
       videos.forEach(function (video) {
         if (!ID_RE.test(video.id)) return;
         var card = template.content.firstElementChild.cloneNode(true);
-        var iframe = card.querySelector('iframe');
-        iframe.src = 'https://www.youtube-nocookie.com/embed/' + video.id +
-          '?rel=0&playsinline=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin);
-        iframe.title = video.title;
-        // Our own full title too: on a phone YouTube cuts its title off before
-        // the song name, which is what tells these videos apart. No upload
-        // date: it isn't the show date. Other channels' videos get a credit.
+        var thumb = card.querySelector('.video-thumb');
+        thumb.setAttribute('aria-label', 'Play ' + video.title);
+        thumb.querySelector('img').src = 'https://i.ytimg.com/vi/' + video.id + '/hqdefault.jpg';
         card.querySelector('.video-title').textContent = video.title;
-        if (!video.ours && video.channel) {
-          var meta = card.querySelector('.video-meta');
-          meta.textContent = 'Posted by ' + video.channel;
-          meta.hidden = false;
-        }
+        // No upload date on purpose: it's when the clip went on YouTube, not
+        // when it was played, so it misleads. Only other channels get a line.
+        var meta = card.querySelector('.video-meta');
+        if (!video.ours && video.channel) meta.textContent = 'Posted by ' + video.channel;
+        else meta.hidden = true;
+        thumb.addEventListener('click', function () { play(card, thumb, video); });
         list.appendChild(card);
-        frames.push(iframe);
-        if (apiReady) attach(iframe);
       });
     }
 
@@ -125,7 +116,6 @@
       .catch(fail);
   })();
   </script>
-  <script src="https://www.youtube.com/iframe_api" async></script>
 
 </body>
 </html>
