@@ -5,6 +5,41 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 
 ---
 
+## Videos (decided 2026-11-19, see PRODUCT_BRIEF)
+
+### Phase V0 — Bill/Mike, on YouTube (blocks V1)
+- [ ] Send the channel URL or @handle (we need the `UC…` channel ID).
+- [ ] On the channel, create a public playlist "Featured" and send its link
+      (we need the `PL…` playlist ID). Put the home-page video first.
+- [ ] Upload `video/womens_club_2025.mp4` to the channel if it should stay the
+      home-page video, and add it to Featured.
+
+### Phase V1 — Home page embed
+- [ ] Replace the self-hosted `<video>` in `index.html` with a responsive
+      `youtube-nocookie.com/embed/videoseries?list=<PL id>` iframe (it starts on
+      the playlist's first video). Keep the existing `.video-wrap` sizing.
+- [ ] Add a big "More videos" button linking to `videos.html`.
+- [ ] Decide whether `video/` files can be deleted (ask Bill; don't delete them).
+
+### Phase V2 — Worker `/videos` route
+- [ ] `GET /videos` in the existing Worker: fetch
+      `youtube.com/feeds/videos.xml?channel_id=…` and `…?playlist_id=…`, parse
+      the entries (id, title, published, channel name), merge, de-dupe by video
+      id, sort newest first, return JSON. Cache about an hour (Cache API).
+      CORS for the site origins only.
+- [ ] Channel and playlist IDs go in `wrangler.jsonc` vars (they're public, not secrets).
+- [ ] Tests in `worker/contact.test.mjs` with a fixture feed (parse, merge,
+      de-dupe, sort, one feed down still returns the other).
+- [ ] Deploy by hand: `npx wrangler deploy -c worker/wrangler.jsonc`.
+
+### Phase V3 — `videos.html`
+- [ ] New page, same header and footer, and tokens from `default.css` (bump `?v=`).
+- [ ] A grid of thumbnail cards (`i.ytimg.com/vi/<id>/hqdefault.jpg`), title,
+      date, and "Posted by …" when the video isn't from our channel. Tap a card to
+      play it in place (the iframe loads only after the tap). Tap targets ≥56px.
+- [ ] Friendly fallback if the Worker fails: a link to the YouTube channel.
+- [ ] Check at 375px, read the console, update TECH_DESIGN.
+
 ## Booking form
 
 ### Phase 1 — Worker backend — ✅ DONE 2026-10-25

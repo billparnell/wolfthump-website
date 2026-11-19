@@ -34,6 +34,20 @@ The page's main job is to turn a visitor into a booking inquiry.
   It forwards to Bill for now and moves to Mike later. It's the reply address on
   the confirmation email, and the band can give it out by hand.
 
+- **2026-11-19: Videos come from YouTube and nobody edits code to add one.**
+  - Two sources: the band's **channel uploads** (automatic) and one
+    **"Featured" playlist** on the channel. Whoever manages the channel adds
+    *any* public YouTube video to it (fan clips, venue clips) with Save → Featured
+    in the YouTube app. Non-YouTube links (Facebook, Instagram) are out of scope.
+  - **Home page:** keeps a single video, which is **the first video in the
+    Featured playlist**. To change it, drag another video to the top of the
+    playlist in YouTube Studio. Below it, a "More videos" link.
+  - **`videos.html`:** channel uploads + Featured playlist in **one list, newest
+    first**, duplicates removed. Videos from other channels show a small credit
+    line ("Posted by …").
+  - Limits we accept: YouTube's feeds show the latest 15 per source, and a new
+    upload can take up to an hour to appear.
+
 ## Out of scope (for now)
 - Calendars, pricing, availability, payments.
-- Any login or admin.
+- Any login or admin. (Videos are managed in YouTube, not on our site.)
