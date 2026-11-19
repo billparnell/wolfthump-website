@@ -55,6 +55,24 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
       that a video plays.
 - [ ] Ask Bill whether the self-hosted `video/` files can be deleted (see V1).
 
+### Review fixes — 2026-11-19 (`/code-review` + `/security-review`)
+`/security-review`: no findings. From `/code-review`:
+- [x] Worker keeps each feed's last good list; one feed failing for good no
+      longer freezes the other.
+- [x] After any feed failure, wait 5 minutes before asking YouTube again.
+- [x] Out-of-range `&#…;` codes in a title stay as text instead of throwing.
+- [x] `/videos/` (trailing slash) reaches the video list.
+- [x] New CSS colors are `:root` tokens; dropped the dead `.video-wrap video`
+      rule; `?v=5` on both pages. Rechecked at 375px, same look.
+- [x] 4 new tests, 28 total, all passing.
+- [ ] **Bill: redeploy the Worker** (`npx wrangler deploy -c worker/wrangler.jsonc`),
+      rerun the `/videos` curl, then push.
+- [ ] iPhone check: does one tap on a thumbnail start the video? If it needs a
+      second tap, change "Tap a video to play it." or start it with YouTube's
+      player API.
+- [ ] Bill to decide: delete `video/` (old home-page mp4 + poster, still public
+      at /video/…) or add `video/` to `_config.yml` exclude. Don't delete unasked.
+
 ## Booking form
 
 ### Phase 1 — Worker backend — ✅ DONE 2026-10-25
@@ -149,6 +167,10 @@ Context is in [`PRODUCT_BRIEF.md`](PRODUCT_BRIEF.md) and [`TECH_DESIGN.md`](TECH
 ---
 
 ## Log
+
+- **2026-11-19:** Both reviews run. Security: clean. Code-review fixes done
+  and committed (see "Review fixes"). Waiting on Bill: Worker redeploy, push,
+  iPhone tap check, the `video/` decision.
 
 - **2026-11-19:** Videos V3 done: `videos.html` and the "More videos" button. The
   whole videos feature is built; it's live once Bill pushes. Open items: phone

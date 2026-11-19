@@ -243,3 +243,37 @@ test('GET /videos needs its IDs and only allows GET', async () => {
   assert.equal((await getVideos({ method: 'POST' })).status, 405);
   assert.equal(calls.length, 0);
 });
+
+test('a feed that keeps failing never freezes the other one', async () => {
+  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: PLAYLIST_XML }; stubFeeds();
+  const t0 = 1_000_000_000_000;
+  await getVideos({ now: t0 });
+  // The playlist goes private for good; the channel gets a new upload.
+  feeds = { channel: feed(entry('ddddddddddd', 'New upload', '2026-11-20T10:00:00+00:00')), playlist: 404 };
+  const body = await (await getVideos({ now: t0 + 61 * 60_000 })).json();
+  assert.deepEqual(body.videos.map(v => v.id), ['ddddddddddd', 'aaaaaaaaaaa', 'ccccccccccc'],
+                   'new channel list + last good playlist');
+});
+
+test('after a failure, YouTube is retried in 5 minutes, not on every visit', async () => {
+  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: 503 }; stubFeeds();
+  const t0 = 1_000_000_000_000;
+  await getVideos({ now: t0 });
+  assert.equal(calls.length, 2);
+  await getVideos({ now: t0 + 4 * 60_000 });
+  assert.equal(calls.length, 2, 'no refetch inside the retry wait');
+  await getVideos({ now: t0 + 5 * 60_000 });
+  assert.equal(calls.length, 4, 'retried after 5 minutes');
+});
+
+test('an out-of-range character code in a title is left as text', () => {
+  const [v] = parseFeed(feed(entry('eeeeeeeeeee', 'Odd &#9999999; &#x110000; ok &#65;', '2026-01-01T00:00:00Z')));
+  assert.equal(v.title, 'Odd &#9999999; &#x110000; ok A');
+});
+
+test('/videos/ with a trailing slash reaches the video list', async () => {
+  _resetMemo(); feeds = { channel: CHANNEL_XML, playlist: PLAYLIST_XML }; stubFeeds();
+  const res = await worker.fetch(new Request('https://w.example/videos/', { headers: { origin: ORIGIN } }), VENV);
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).videos.length, 3);
+});

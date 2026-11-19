@@ -88,12 +88,18 @@ booking checks, so the two don't share config requirements.
   upload date, in both feeds), newest first. Returns
   `{ ok, videos: [{ id, title, published, channel, ours }] }`; `ours` is false
   for videos from other channels, so the page can add "Posted by {channel}".
-- **Caching:** the Cache API is a no-op on `workers.dev`, so each isolate keeps
-  the last list in memory and refetches YouTube at most hourly. If both feeds
-  fail it serves that last good list; one feed failing returns the other
-  (and retries next request). Nothing cached and both down → 502. Browsers may
-  reuse a 200 for 10 minutes (`max-age=600`). So a new upload shows up within
-  about an hour, sometimes sooner when a fresh isolate starts.
+- **Caching (reworked after /code-review, 2026-11-19):** the Cache API is a
+  no-op on `workers.dev`, so each isolate keeps **each feed's last good list**
+  in memory. After a clean fetch of both feeds it reuses them for an hour.
+  If either feed fails, the one that loaded is updated, the failed one keeps its
+  last good list, and YouTube isn't asked again for **5 minutes**, not on every
+  visit. So a playlist that goes private for good never freezes new channel
+  uploads. No list ever loaded → 502 (for up to 5 minutes, then a retry).
+  Browsers may reuse a 200 for 10 minutes (`max-age=600`). A new upload shows up
+  within about an hour.
+- Numeric character codes outside Unicode (`&#9999999;`) are left as text,
+  because `String.fromCodePoint` would throw and drop the whole feed.
+- The route matches `/videos` and `/videos/`.
 - CORS: `access-control-allow-origin` only for `ALLOWED_ORIGINS`. Other callers
   (curl) still get the data, since it's public anyway. GET only.
 
@@ -170,8 +176,9 @@ Turnstile, because each token works only once.
 ## Tests
 `node --test worker/contact.test.mjs`. It needs no dependencies, mocks `fetch`,
 and covers every row of the booking table above plus `/videos` (parsing,
-entities, merge/de-dupe/sort, CORS, one feed down, hourly memo, stale-on-outage,
-502, 503, 405). The `videos … feed 500` lines in the output are expected logs.
+entities, merge/de-dupe/sort, CORS, one feed down, a feed down for good,
+hourly reuse, 5-minute retry wait, stale-on-outage, bad character codes,
+trailing slash, 502, 503, 405). The `videos … feed 500` lines in the output are expected logs.
 
 ## Visual system
 Tokens are on `:root` in `css/default.css` (deep-water / teal / cream / gold),
@@ -179,6 +186,9 @@ with Cinzel for headings and Crimson Pro for body text, 18px base.
 
 - **One card family:** `.booking-card` and `.video-card` share the same border and
   background rule. Video cards drop the padding so the thumbnail runs edge to edge.
+- **Colors added with videos.html are tokens:** `--night`, `--night-deep`,
+  `--night-deep-60`, `--cream-70`, `--pale-water-30`. Older rules still have the
+  same values spelled out; switch them over when touching those rules.
 - **One button:** `.form-button`. On an `<a>` (`a.form-button`) it centers its
   label with flex: "More videos" and "See us on YouTube".
 - **Checking 375px without the Chrome extension:** headless Chrome on macOS won't

@@ -118,7 +118,7 @@ function confirmationEmail(env, { email }) {
 
 export default {
   async fetch(request, env) {
-    if (new URL(request.url).pathname === '/videos') return handleVideos(request, env);
+    if (/^\/videos\/?$/.test(new URL(request.url).pathname)) return handleVideos(request, env);
 
     const missing = REQUIRED.filter(k => !env[k]);
     if (missing.length) return json(503, { ok: false, error: 'The form is not switched on yet.' });

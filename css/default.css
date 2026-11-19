@@ -11,6 +11,12 @@ html { background-color: #091820; }
   --gold: #c9a84c;
   --text-main: #e8dcc8;
   --text-muted: #9ab5be;
+  /* Added with videos.html (2026-11-19). Older rules still spell these out. */
+  --night: #091820;                      /* darkest page band: hero top, page header */
+  --night-deep: #060f16;                 /* behind video players and the footer */
+  --night-deep-60: rgba(6,15,22,0.6);    /* play-ring backing over thumbnails */
+  --cream-70: rgba(232,220,200,0.7);     /* play-ring outline over thumbnails */
+  --pale-water-30: rgba(122,184,200,0.3);/* logo glow */
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 /* Components set display; this keeps the hidden attribute working on them. */
@@ -188,11 +194,6 @@ section { position: relative; padding: 90px 20px; }
 .video-wrap iframe {
   position: absolute; inset: 0;
   width: 100%; height: 100%; border: none;
-}
-.video-wrap video {
-  display: block;
-  width: 100%; height: auto;
-  border: none;
 }
 
 /* "More videos" under the home-page video. */
@@ -415,7 +416,7 @@ a.form-button {
 /* ── VIDEOS PAGE (videos.html) ── */
 .page-header {
   padding: 24px 20px 0;
-  background: #091820;
+  background: var(--night);
   text-align: center;
 }
 .page-header-logo {
@@ -425,12 +426,12 @@ a.form-button {
 }
 .page-header-logo img {
   width: 100%; display: block;
-  filter: invert(1) drop-shadow(0 0 20px rgba(122,184,200,0.3));
+  filter: invert(1) drop-shadow(0 0 20px var(--pale-water-30));
   mix-blend-mode: screen;
 }
 .videos-section {
   padding-top: 40px;
-  background: linear-gradient(180deg, #091820 0%, #0d1f2d 100%);
+  background: linear-gradient(180deg, var(--night) 0%, var(--deep-water) 100%);
 }
 .videos-section h1 {
   font-family: 'Cinzel', serif;
@@ -460,7 +461,7 @@ a.form-button {
 .video-frame {
   display: block; position: relative;
   width: 100%; aspect-ratio: 16/9;
-  background: #060f16;
+  background: var(--night-deep);
 }
 .video-thumb {
   border: none; padding: 0; cursor: pointer;
@@ -476,8 +477,8 @@ a.form-button {
 .video-thumb .play-ring {
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(6,15,22,0.6);
-  border-color: rgba(232,220,200,0.7);
+  background: var(--night-deep-60);
+  border-color: var(--cream-70);
 }
 .video-thumb .play-ring::after { border-color: transparent transparent transparent var(--warm-white); }
 .video-frame iframe {
